@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:bathao/Controllers/AuthController/AuthController.dart';
 import 'package:bathao/Models/user_model.dart';
 import 'package:bathao/Services/ApiService.dart';
 import 'package:bathao/Widgets/MainPage/MainPage.dart';
@@ -15,6 +16,7 @@ class RegisterController extends GetxController {
   TextEditingController dobController = TextEditingController();
   final ApiService _apiService = ApiService();
   late UserModel model = UserModel();
+  AuthController controller=Get.put(AuthController());
   String gender = '';
   String phone = '';
   String dob = '';
@@ -69,8 +71,10 @@ class RegisterController extends GetxController {
         model = UserModel.fromJson(response.body);
         final prefs = await SharedPreferences.getInstance();
         jwsToken = model.token;
-        await prefs.setString('jwtToken', model.token!);
+        await prefs.setString('token', model.token!);
         print("Registered successfully");
+        await controller.getUserData();
+
         Get.offAll(MainPage());
       } else {
         print("Failed: ${response.statusCode} ${response.body}");

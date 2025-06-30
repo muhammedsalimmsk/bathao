@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import 'ProfileConnectPainter.dart';
 
 class CustomHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String userName;
-  final int coinCount;
+  final RxInt coinCount;
   final String profileImageUrl;
 
   const CustomHomeAppBar({
@@ -85,14 +86,14 @@ class CustomHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                         children: [
                           const Icon(Icons.stars, color: Colors.amber),
                           const SizedBox(width: 4),
-                          Text(
-                            "$coinCount",
+                          Obx(()=>Text(
+                            coinCount.value.toString(),
                             style: const TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
                             ),
-                          ),
+                          ),)
                         ],
                       ),
                     ],

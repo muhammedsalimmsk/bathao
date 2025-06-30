@@ -20,6 +20,7 @@ void main() async {
   final hasSeenOnBoard = prefs.getBool('onboard_seen') ?? false;
   final token = prefs.getString('token');
   jwsToken = token;
+  print(token);
   ZegoUIKitPrebuiltCallInvitationService().setNavigatorKey(navigatorKey);
   ZegoUIKit().initLog().then((val){
     ZegoUIKitPrebuiltCallInvitationService().useSystemCallingUI(

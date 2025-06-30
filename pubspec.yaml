@@ -35,6 +35,8 @@ dependencies:
   image_picker: ^1.1.2
   shared_preferences: ^2.5.3
   zego_uikit_prebuilt_call: ^4.17.3
+  floating_bottom_navigation_bar: ^1.5.2
+  url_launcher: ^6.3.1
   zego_uikit_signaling_plugin: ^2.8.13
   zego_uikit: ^2.28.5
   get: ^4.7.2

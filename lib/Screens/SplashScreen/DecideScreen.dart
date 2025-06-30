@@ -1,5 +1,6 @@
 import 'package:bathao/Controllers/AuthController/RegisterController.dart';
 import 'package:bathao/Theme/Colors.dart';
+import 'package:bathao/Widgets/MainPage/MainPage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -14,7 +15,7 @@ class DecideScreen extends StatelessWidget {
   Future<Widget> checkAuth() async {
     if (jwsToken!=null) {
       await controller.getUserData();
-      return HomePage();
+      return MainPage();
     } else {
       return LoginPage();
     }

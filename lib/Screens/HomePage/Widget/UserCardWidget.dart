@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:bathao/Screens/HomePage/Widget/CallButton.dart';
 import 'package:bathao/Services/ApiService.dart';
 import 'package:get/get.dart';
 import 'package:bathao/Controllers/CallController/CallController.dart';
@@ -61,7 +62,7 @@ class UserCard extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8,horizontal: 8),
       child: Container(
-        height: 300,
+        height: 100,
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: const Color(0xFF2D2A2A),
@@ -164,28 +165,8 @@ class UserCard extends StatelessWidget {
                 Row(
                   spacing: 10,
                   children: [
-                    ZegoSendCallInvitationButton(
-                      buttonSize: const Size(40, 40),
-                      isVideoCall: false,
-                      resourceID: "zegouikit_call",
-                      invitees: [
-                        ZegoUIKitUser(
-                          id: userId,
-                          name: name,
-                        ),
-                      ],
-                    ),
-                    ZegoSendCallInvitationButton(
-                      buttonSize: const Size(40, 40),
-                      isVideoCall: true,
-                      resourceID: "zegouikit_call",
-                      invitees: [
-                        ZegoUIKitUser(
-                          id: userId,
-                          name: name,
-                        ),
-                      ],
-                    ),
+                    MyCustomCallButton(userId: userId, name: name),
+                    MyCustomCallButton(userId: userId, name: name,isVideoCall: true,)
                   ],
                 ),
 

@@ -1,4 +1,5 @@
 import 'package:bathao/Controllers/AuthController/AuthController.dart';
+import 'package:bathao/Controllers/AuthController/RegisterController.dart';
 import 'package:bathao/Services/ApiService.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -27,4 +28,24 @@ class CallController extends GetxController {
       rethrow;
     }
   }
+  Future startCall(String receiverId,String callType)async{
+    final endpoint='api/v1/call/start-call';
+    final data={
+      "receiverId":receiverId,
+      "callType":callType
+    };
+    try{
+      final response=await _apiService.postRequest(endpoint, data,bearerToken: jwsToken);
+      if(response.isOk){
+        print(response.body);
+      }else{
+        print(response.body);
+      }
+    }catch(e){
+      print(e);
+      rethrow;
+    }
+  }
+  
+
 }

@@ -94,6 +94,7 @@ class OtpVerificationPage extends GetView<AuthController> {
               appContext: context,
               onChanged: (value) => controller.otp.value = value,
               pinTheme: PinTheme(
+                errorBorderColor: AppColors.onBoardSecondary,
                 activeFillColor: Colors.black,
                 selectedFillColor: Colors.black,
                 inactiveFillColor: Colors.black,
@@ -143,49 +144,76 @@ class OtpVerificationPage extends GetView<AuthController> {
             Obx(
               () =>
                   controller.isLoading.value
-                      ? CircularProgressIndicator(
-                        color: AppColors.onBoardPrimary,
+                      ? Center(
+                        child: CircularProgressIndicator(
+                          color: AppColors.onBoardPrimary,
+                        ),
                       )
                       : GestureDetector(
-                        onTap: controller.verifyOTP,
-                        child: Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 16,
-                            horizontal: 24,
-                          ),
-                          decoration: BoxDecoration(
-                            gradient: const LinearGradient(
-                              colors: [Color(0xFF6A00FF), Color(0xFFD300C5)],
+                    onTap: controller.verifyOTP,
+                    child: Center(
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 14,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.getStartBackground,
+                          borderRadius: BorderRadius.circular(40),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              "Get Started",
+                              style: TextStyle(color: Colors.white, fontSize: 22),
                             ),
-                            borderRadius: BorderRadius.circular(40),
-                            boxShadow: const [
-                              BoxShadow(
-                                color: Colors.black38,
-                                blurRadius: 10,
-                                offset: Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                "Verify",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 18,
+                            SizedBox(width: 10),
+                            Icon(
+                              Icons.arrow_forward_ios,
+                              color: AppColors.textColor,
+                            ),
+                            Icon(
+                              Icons.arrow_forward_ios,
+                              color: AppColors.textColor.withOpacity(0.8),
+                            ),
+                            Icon(
+                              Icons.arrow_forward_ios,
+                              color: AppColors.textColor.withOpacity(0.6),
+                            ),
+                            Icon(
+                              Icons.arrow_forward_ios,
+                              color: AppColors.textColor.withOpacity(0.4),
+                            ),
+                            SizedBox(width: 10),
+                            Container(
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                gradient: LinearGradient(
+                                  colors: AppColors.buttonGradient,
+                                  begin: Alignment.topLeft,
                                 ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: AppColors.textColor.withValues(
+                                      alpha: 0.30,
+                                    ),
+                                    blurRadius: 10,
+                                    spreadRadius: 4,
+                                  ),
+                                ],
                               ),
-                              SizedBox(width: 10),
-                              Icon(
+                              padding: EdgeInsets.all(8),
+                              child: Icon(
                                 Icons.arrow_forward_ios,
                                 color: Colors.white,
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ),
+                    ),
+                  ),
             ),
           ],
         ),
