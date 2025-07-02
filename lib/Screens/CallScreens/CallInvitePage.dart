@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
+
 class CallInvitePage extends StatefulWidget {
   const CallInvitePage({super.key});
 
@@ -18,13 +19,8 @@ class _CallInvitePageState extends State<CallInvitePage> {
           //You need to use the resourceID that you created in the subsequent steps.
           //Please continue reading this document.
           resourceID: "zegouikit_call",
-          invitees: [
-            ZegoUIKitUser(
-              id: "salim123",
-              name: 'salim',
-            ),
-          ],
-        )
+          invitees: [ZegoUIKitUser(id: "salim123", name: 'salim')],
+        ),
       ),
     );
   }

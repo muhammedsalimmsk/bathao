@@ -7,6 +7,7 @@ import 'package:bathao/Theme/Colors.dart';
 import 'package:flutter/material.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
+
 class UserCard extends StatelessWidget {
   final String name;
   final String age;
@@ -26,14 +27,12 @@ class UserCard extends StatelessWidget {
     required this.coins,
     required this.stars,
     required this.status,
-    required this.userId
+    required this.userId,
   });
 
   @override
   Widget build(BuildContext context) {
-
-   
-    CallController callController=Get.put(CallController());
+    CallController callController = Get.put(CallController());
     Color getRandomColor() {
       final Random random = Random();
       return Color.fromARGB(
@@ -60,7 +59,7 @@ class UserCard extends StatelessWidget {
     final Color statusColor = getStatusColor();
     print("userId is $userId");
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8,horizontal: 8),
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
       child: Container(
         height: 100,
         padding: const EdgeInsets.all(12),
@@ -81,9 +80,12 @@ class UserCard extends StatelessWidget {
                   ),
                   child: CircleAvatar(
                     radius: 28,
-                    backgroundColor: (imageUrl == null) ? getRandomColor() : null,
+                    backgroundColor:
+                        (imageUrl == null) ? getRandomColor() : null,
                     backgroundImage:
-                        (imageUrl != null) ? NetworkImage("$baseImageUrl$imageUrl") : null,
+                        (imageUrl != null)
+                            ? NetworkImage("$baseImageUrl$imageUrl")
+                            : null,
                     child:
                         (imageUrl == null)
                             ? Text(
@@ -159,17 +161,23 @@ class UserCard extends StatelessWidget {
                     Container(height: 20, width: 1, color: Colors.grey),
                     const SizedBox(width: 8),
                     const Icon(Icons.star, color: Colors.orangeAccent),
-                    Text(" $stars", style: const TextStyle(color: Colors.white)),
+                    Text(
+                      " $stars",
+                      style: const TextStyle(color: Colors.white),
+                    ),
                   ],
                 ),
                 Row(
                   spacing: 10,
                   children: [
                     MyCustomCallButton(userId: userId, name: name),
-                    MyCustomCallButton(userId: userId, name: name,isVideoCall: true,)
+                    MyCustomCallButton(
+                      userId: userId,
+                      name: name,
+                      isVideoCall: true,
+                    ),
                   ],
                 ),
-
               ],
             ),
           ],
@@ -177,5 +185,4 @@ class UserCard extends StatelessWidget {
       ),
     );
   }
-
 }

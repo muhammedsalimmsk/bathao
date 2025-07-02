@@ -150,70 +150,73 @@ class OtpVerificationPage extends GetView<AuthController> {
                         ),
                       )
                       : GestureDetector(
-                    onTap: controller.verifyOTP,
-                    child: Center(
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical: 14,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColors.getStartBackground,
-                          borderRadius: BorderRadius.circular(40),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              "Get Started",
-                              style: TextStyle(color: Colors.white, fontSize: 22),
+                        onTap: controller.verifyOTP,
+                        child: Center(
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 20,
+                              vertical: 14,
                             ),
-                            SizedBox(width: 10),
-                            Icon(
-                              Icons.arrow_forward_ios,
-                              color: AppColors.textColor,
+                            decoration: BoxDecoration(
+                              color: AppColors.getStartBackground,
+                              borderRadius: BorderRadius.circular(40),
                             ),
-                            Icon(
-                              Icons.arrow_forward_ios,
-                              color: AppColors.textColor.withOpacity(0.8),
-                            ),
-                            Icon(
-                              Icons.arrow_forward_ios,
-                              color: AppColors.textColor.withOpacity(0.6),
-                            ),
-                            Icon(
-                              Icons.arrow_forward_ios,
-                              color: AppColors.textColor.withOpacity(0.4),
-                            ),
-                            SizedBox(width: 10),
-                            Container(
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                gradient: LinearGradient(
-                                  colors: AppColors.buttonGradient,
-                                  begin: Alignment.topLeft,
-                                ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: AppColors.textColor.withValues(
-                                      alpha: 0.30,
-                                    ),
-                                    blurRadius: 10,
-                                    spreadRadius: 4,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  "Get Started",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 22,
                                   ),
-                                ],
-                              ),
-                              padding: EdgeInsets.all(8),
-                              child: Icon(
-                                Icons.arrow_forward_ios,
-                                color: Colors.white,
-                              ),
+                                ),
+                                SizedBox(width: 10),
+                                Icon(
+                                  Icons.arrow_forward_ios,
+                                  color: AppColors.textColor,
+                                ),
+                                Icon(
+                                  Icons.arrow_forward_ios,
+                                  color: AppColors.textColor.withOpacity(0.8),
+                                ),
+                                Icon(
+                                  Icons.arrow_forward_ios,
+                                  color: AppColors.textColor.withOpacity(0.6),
+                                ),
+                                Icon(
+                                  Icons.arrow_forward_ios,
+                                  color: AppColors.textColor.withOpacity(0.4),
+                                ),
+                                SizedBox(width: 10),
+                                Container(
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    gradient: LinearGradient(
+                                      colors: AppColors.buttonGradient,
+                                      begin: Alignment.topLeft,
+                                    ),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: AppColors.textColor.withValues(
+                                          alpha: 0.30,
+                                        ),
+                                        blurRadius: 10,
+                                        spreadRadius: 4,
+                                      ),
+                                    ],
+                                  ),
+                                  padding: EdgeInsets.all(8),
+                                  child: Icon(
+                                    Icons.arrow_forward_ios,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ],
                             ),
-                          ],
+                          ),
                         ),
                       ),
-                    ),
-                  ),
             ),
           ],
         ),

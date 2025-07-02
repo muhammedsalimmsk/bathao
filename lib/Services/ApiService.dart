@@ -2,7 +2,9 @@ import 'dart:io';
 
 import 'package:get/get.dart';
 import 'package:get/get_connect/connect.dart';
-final baseImageUrl='https://bathao-backend.onrender.com';
+
+final baseImageUrl = 'https://bathao-backend.onrender.com';
+
 class ApiService extends GetConnect {
   ApiService() {
     // Set your base URL

@@ -86,14 +86,16 @@ class CustomHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                         children: [
                           const Icon(Icons.stars, color: Colors.amber),
                           const SizedBox(width: 4),
-                          Obx(()=>Text(
-                            coinCount.value.toString(),
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
+                          Obx(
+                            () => Text(
+                              coinCount.value.toString(),
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
                             ),
-                          ),)
+                          ),
                         ],
                       ),
                     ],

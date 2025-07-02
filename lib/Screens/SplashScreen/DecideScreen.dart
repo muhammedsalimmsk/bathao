@@ -7,13 +7,14 @@ import 'package:get/get.dart';
 import '../../Controllers/AuthController/AuthController.dart';
 import '../AuthPage/LoginPage.dart';
 import '../HomePage/HomePage.dart';
+
 class DecideScreen extends StatelessWidget {
   DecideScreen({super.key});
 
   final AuthController controller = Get.put(AuthController());
 
   Future<Widget> checkAuth() async {
-    if (jwsToken!=null) {
+    if (jwsToken != null) {
       await controller.getUserData();
       return MainPage();
     } else {
@@ -27,11 +28,12 @@ class DecideScreen extends StatelessWidget {
       future: checkAuth(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return  Scaffold(
+          return Scaffold(
             body: Center(
-                child: CircularProgressIndicator(
-                  color:AppColors.onBoardSecondary ,
-                )),
+              child: CircularProgressIndicator(
+                color: AppColors.onBoardSecondary,
+              ),
+            ),
           );
         } else if (snapshot.hasError) {
           // Log error and fallback to login

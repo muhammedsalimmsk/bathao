@@ -1,30 +1,35 @@
+import 'package:bathao/Controllers/CallController/CallController.dart';
 import 'package:bathao/Controllers/PaymentController/PaymentController.dart';
 import 'package:bathao/Theme/Colors.dart';
 import 'package:flutter/material.dart';
 import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 import 'package:get/get.dart';
+
 class MyCustomCallButton extends StatelessWidget {
   final String userId;
   final String name;
   final bool isVideoCall;
 
-   MyCustomCallButton({
+  MyCustomCallButton({
     super.key,
     required this.userId,
     required this.name,
     this.isVideoCall = false,
   });
-   PaymentController controller=Get.find();
-
+  PaymentController controller = Get.find();
+  CallController callController = Get.find();
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
         print(controller.totalCoin.value);
+        callController.receiverId = userId;
 
         if (controller.totalCoin.value >= 100) {
           if (isVideoCall) {
             if (controller.totalCoin.value >= 200) {
+              callController.callType = "video";
+
               ZegoUIKitPrebuiltCallInvitationService().send(
                 isVideoCall: true,
                 invitees: [ZegoCallUser(userId, name)],
@@ -39,7 +44,9 @@ class MyCustomCallButton extends StatelessWidget {
               );
             }
           } else {
+            callController.callType = "audio";
             // Audio call, needs at least 100 coins
+            callController.receiverId = userId;
             ZegoUIKitPrebuiltCallInvitationService().send(
               isVideoCall: false,
               invitees: [ZegoCallUser(userId, name)],
@@ -63,7 +70,9 @@ class MyCustomCallButton extends StatelessWidget {
           shape: BoxShape.circle, // 🎯 Round button
         ),
         child: Icon(
-          isVideoCall?Icons.videocam_rounded:Icons.call, // 📞 You can use Icons.videocam for video
+          isVideoCall
+              ? Icons.videocam_rounded
+              : Icons.call, // 📞 You can use Icons.videocam for video
           color: Colors.white, // ⚪ White icon
           size: 30,
         ),

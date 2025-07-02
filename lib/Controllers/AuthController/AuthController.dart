@@ -11,7 +11,9 @@ import 'package:bathao/Widgets/MainPage/MainPage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 UserDataModel? userModel;
+
 class AuthController extends GetxController {
   var isAgreed = false.obs;
   var selectedCountryCode = '+91'.obs;
@@ -60,7 +62,7 @@ class AuthController extends GetxController {
           token = response.body['token'];
           SharedPreferences preferences = await SharedPreferences.getInstance();
           preferences.setString("token", token!);
-          jwsToken=token;
+          jwsToken = token;
           await getUserData();
           Get.off(MainPage());
         } else {
@@ -154,14 +156,13 @@ class AuthController extends GetxController {
         bearerToken: jwsToken,
       );
       print("Bearer $jwsToken");
-      if(response.isOk){
-        userModel=UserDataModel.fromJson(response.body);
+      if (response.isOk) {
+        userModel = UserDataModel.fromJson(response.body);
         print("success get user data");
-
-      }else{
+      } else {
         print("user not found");
         print(response.body);
-        if(response.body['message']=='Invalid token'){
+        if (response.body['message'] == 'Invalid token') {
           print("object");
           Get.offAll(LoginPage());
         }

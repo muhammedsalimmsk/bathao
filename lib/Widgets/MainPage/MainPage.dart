@@ -1,5 +1,7 @@
+import 'package:bathao/Screens/CallHistoryPage/CallHistoryPage.dart';
 import 'package:bathao/Screens/CoinPurchasePage/CoinPurchasePage.dart';
 import 'package:bathao/Screens/HomePage/HomePage.dart';
+import 'package:bathao/Screens/ProfilePage/ProfilePage.dart';
 import 'package:bathao/Theme/Colors.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -10,76 +12,79 @@ class MainPage extends StatelessWidget {
 
   final List<Widget> pages = [
     HomePage(),
-    Center(child: Text('Calls Page')),
+    CallHistoryPage(),
     CoinPurchasePage(),
-    Center(child: Text('Profile Page')),
+    ProfilePage(),
   ];
 
   @override
   Widget build(BuildContext context) {
-    return Obx(() => Scaffold(
-      backgroundColor: AppColors.scaffoldColor,
-      extendBody: true,
-      body: Stack(
-        children: [
-          pages[controller.selectedIndex.value],
-          Positioned(
-            left: 20,
-            right: 20,
-            bottom: 20,
-            child: Container(
-              decoration: BoxDecoration(
-                color: AppColors.onBoardSecondary,
-                borderRadius: BorderRadius.circular(30),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black26,
-                    blurRadius: 10,
-                    offset: Offset(0, 4),
-                  ),
-                ],
-              ),
-              padding:
-              const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  _navItem(
-                    icon: Icons.home,
-                    label: "Home",
-                    index: 0,
-                    controller: controller,
-                    activeGradient: const LinearGradient(
-                      colors: [Color(0xFFDA00FF), Color(0xFF00FFD1)],
+    return Obx(
+      () => Scaffold(
+        backgroundColor: AppColors.scaffoldColor,
+        extendBody: true,
+        body: Stack(
+          children: [
+            pages[controller.selectedIndex.value],
+            Positioned(
+              left: 20,
+              right: 20,
+              bottom: 20,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: AppColors.onBoardSecondary,
+                  borderRadius: BorderRadius.circular(30),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black26,
+                      blurRadius: 10,
+                      offset: Offset(0, 4),
                     ),
-                  ),
-                  _navItem(
-                    icon: Icons.receipt_long_rounded,
-                    label: "Calls",
-                    index: 1,
-                    controller: controller,
-                  ),
-                  _navItem(
-                    icon: Icons.monetization_on,
-                    label: "Coin Purchase",
-                    index: 2,
-                    controller: controller,
-                  ),
-                  _navItem(
-                    icon: Icons.person,
-                    label: "Profile",
-                    index: 3,
-                    controller: controller,
-                  ),
-                ],
+                  ],
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 10,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    _navItem(
+                      icon: Icons.home,
+                      label: "Home",
+                      index: 0,
+                      controller: controller,
+                      activeGradient: const LinearGradient(
+                        colors: [Color(0xFFDA00FF), Color(0xFF00FFD1)],
+                      ),
+                    ),
+                    _navItem(
+                      icon: Icons.call,
+                      label: "Calls",
+                      index: 1,
+                      controller: controller,
+                    ),
+                    _navItem(
+                      icon: Icons.monetization_on,
+                      label: "Coin Purchase",
+                      index: 2,
+                      controller: controller,
+                    ),
+                    _navItem(
+                      icon: Icons.person,
+                      label: "Profile",
+                      index: 3,
+                      controller: controller,
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
-    ));
+    );
   }
-
 
   Widget _navItem({
     required IconData icon,
@@ -99,14 +104,11 @@ class MainPage extends StatelessWidget {
             shaderCallback: (bounds) {
               return isSelected && activeGradient != null
                   ? activeGradient.createShader(bounds)
-                  : const LinearGradient(colors: [Colors.grey, Colors.grey])
-                  .createShader(bounds);
+                  : const LinearGradient(
+                    colors: [Colors.grey, Colors.grey],
+                  ).createShader(bounds);
             },
-            child: Icon(
-              icon,
-              size: 24,
-              color: Colors.white,
-            ),
+            child: Icon(icon, size: 24, color: Colors.white),
           ),
           const SizedBox(height: 4),
           Text(

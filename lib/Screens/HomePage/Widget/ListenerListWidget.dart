@@ -21,7 +21,6 @@ class ListenerListWidget extends StatelessWidget {
       return age.toString();
     }
 
-
     ListenerController controller = Get.put(ListenerController());
     return GetBuilder<ListenerController>(
       builder: (controller) {

@@ -13,7 +13,8 @@ import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 import 'package:zego_uikit_signaling_plugin/zego_uikit_signaling_plugin.dart';
 
 import 'Screens/AuthPage/LoginPage.dart';
-final navigatorKey=GlobalKey<NavigatorState>();
+
+final navigatorKey = GlobalKey<NavigatorState>();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final prefs = await SharedPreferences.getInstance();
@@ -22,12 +23,11 @@ void main() async {
   jwsToken = token;
   print(token);
   ZegoUIKitPrebuiltCallInvitationService().setNavigatorKey(navigatorKey);
-  ZegoUIKit().initLog().then((val){
-    ZegoUIKitPrebuiltCallInvitationService().useSystemCallingUI(
-      [ZegoUIKitSignalingPlugin()]
-    );
+  ZegoUIKit().initLog().then((val) {
+    ZegoUIKitPrebuiltCallInvitationService().useSystemCallingUI([
+      ZegoUIKitSignalingPlugin(),
+    ]);
   });
-
 
   runApp(
     MyApp(

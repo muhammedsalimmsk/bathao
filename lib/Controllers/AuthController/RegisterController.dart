@@ -16,7 +16,7 @@ class RegisterController extends GetxController {
   TextEditingController dobController = TextEditingController();
   final ApiService _apiService = ApiService();
   late UserModel model = UserModel();
-  AuthController controller=Get.put(AuthController());
+  AuthController controller = Get.put(AuthController());
   String gender = '';
   String phone = '';
   String dob = '';

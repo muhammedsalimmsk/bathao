@@ -16,7 +16,7 @@ class User {
     this.lastLogin,
     this.createdAt,
     this.updatedAt,
-    this.profilePic
+    this.profilePic,
   });
 
   factory User.fromJson(Map<String, dynamic> json) => User(
@@ -44,7 +44,7 @@ class User {
     'phone': phone,
     'name': name,
     'langs': langs,
-    'profilePic':profilePic,
+    'profilePic': profilePic,
     'lastLogin': lastLogin?.toIso8601String(),
     'createdAt': createdAt?.toIso8601String(),
     'updatedAt': updatedAt?.toIso8601String(),
