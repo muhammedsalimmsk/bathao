@@ -113,10 +113,9 @@ class ProfilePage extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
             child: ElevatedButton.icon(
               onPressed: () async {
-                // Handle logout
                 SharedPreferences pref = await SharedPreferences.getInstance();
-                pref.clear();
-                Get.off(LoginPage());
+                pref.remove('token');
+                Get.offAll(LoginPage());
               },
               icon: const Icon(Icons.logout),
               label: const Text("Logout"),
