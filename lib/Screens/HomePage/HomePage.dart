@@ -12,6 +12,7 @@ import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 import 'package:zego_uikit_signaling_plugin/zego_uikit_signaling_plugin.dart';
 import 'package:get/get.dart';
 import '../../Services/CallTracker.dart';
+import '../../main.dart';
 import 'Widget/LanguegeChipsWidget.dart';
 import 'Widget/ListenerListWidget.dart';
 
@@ -25,10 +26,12 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     bool _hasShownUnavailableDialog = false;
     final callTracker = CallTracker();
+
+// Your ZegoCloud initialization
     ZegoUIKitPrebuiltCallInvitationService().init(
       appSign: CallApis.appSign,
       appID: CallApis.appId,
-      userID: userModel!.user!.id!,
+      userID: userModel!.user!.id!, // Ensure userModel is not null here
       userName: userModel!.user!.name!,
       plugins: [ZegoUIKitSignalingPlugin()],
       events: ZegoUIKitPrebuiltCallEvents(
@@ -38,11 +41,13 @@ class HomePage extends StatelessWidget {
         onCallEnd: callTracker.onCallEnd,
       ),
       invitationEvents: ZegoUIKitPrebuiltCallInvitationEvents(
-        onOutgoingCallAccepted: (String callID, ZegoCallUser callee) {
-          debugPrint("📲 Callee accepted invite. callID: $callID");
+        onOutgoingCallAccepted: (String callID, ZegoCallUser callee) async {
+          debugPrint("📲 Callee accepted invite. callID: $callID at ${DateTime.now()}");
+          // Potentially set controller.callId here if it's available and not set elsewhere
+          callTracker.controller.callId = callID; // Assuming controller.callId is mutable
         },
         onError: (ZegoUIKitError error) {
-          debugPrint("❌ ZEGOCLOUD Error: ${error.code} - ${error.message}");
+          debugPrint("❌ ZEGOCLOUD Error: ${error.code} - ${error.message} at ${DateTime.now()}");
 
           // 107026 = all called users not registered
           if (error.code == 107026 && !_hasShownUnavailableDialog) {
@@ -51,7 +56,7 @@ class HomePage extends StatelessWidget {
               barrierDismissible: false,
               backgroundColor: AppColors.onBoardSecondary,
               title: "Error",
-              middleText: "Please call after some time",
+              middleText: "User is not online. Please call after some time.", // More specific message
               textConfirm: "OK",
               confirmTextColor: Colors.white,
               onConfirm: () {
@@ -59,13 +64,13 @@ class HomePage extends StatelessWidget {
                 Get.back();
               },
             );
-          } else if (_hasShownUnavailableDialog == false) {
+          } else if (error.code != 107026 && !_hasShownUnavailableDialog) { // Handle other errors generally
             _hasShownUnavailableDialog = true;
             Get.defaultDialog(
               barrierDismissible: false,
               backgroundColor: AppColors.onBoardSecondary,
               title: "Error",
-              middleText: "Please call after some time",
+              middleText: "An error occurred. Please try again later. Code: ${error.code}",
               textConfirm: "OK",
               confirmTextColor: Colors.white,
               onConfirm: () {
@@ -74,8 +79,8 @@ class HomePage extends StatelessWidget {
               },
             );
           }
+          // If dialog is already shown, do nothing to avoid multiple dialogs
         },
-
         // add more invitation events as needed
       ),
     );

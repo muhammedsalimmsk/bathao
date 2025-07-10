@@ -51,6 +51,7 @@ class CallController extends GetxController {
         data,
         bearerToken: jwsToken,
       );
+      print(data);
       if (response.isOk) {
         print("🔰🔰🔰🔰🔰🔰🔰🔰🔰🔰🔰🔰🔰🔰🔰🔰🔰🔰🔰${response.body}");
         callId = response.body['callId'];
