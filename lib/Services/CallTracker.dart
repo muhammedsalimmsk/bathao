@@ -6,6 +6,8 @@ import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 import 'package:bathao/Controllers/CallController/CallController.dart';
 import 'package:get/get.dart';
 
+import '../main.dart';
+
 class CallTracker {
   Timer? _minuteTimer;
   Timer? _preCutoffTimer;
@@ -17,7 +19,7 @@ class CallTracker {
 
     if (state.reason == ZegoRoomStateChangedReason.Logined) {
       debugPrint('✅ Call started');
-      await controller.startCall(controller.receiverId!, controller.callType);
+      await controller.startCall(receiverId!, controller.callType);
       // Start the per-minute coin check
       _minuteTimer = Timer.periodic(const Duration(minutes: 1), (timer) async {
         debugPrint('⏱ Minute ${timer.tick}');

@@ -90,6 +90,7 @@ class OtpVerificationPage extends GetView<AuthController> {
 
             // OTP Field
             PinCodeTextField(
+              keyboardType: TextInputType.number,
               length: 6,
               appContext: context,
               onChanged: (value) => controller.otp.value = value,
@@ -146,7 +147,7 @@ class OtpVerificationPage extends GetView<AuthController> {
                   controller.isLoading.value
                       ? Center(
                         child: CircularProgressIndicator(
-                          color: AppColors.onBoardPrimary,
+                          color: AppColors.textColor,
                         ),
                       )
                       : GestureDetector(

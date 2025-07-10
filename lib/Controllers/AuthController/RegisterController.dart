@@ -4,10 +4,13 @@ import 'package:bathao/Controllers/AuthController/AuthController.dart';
 import 'package:bathao/Models/user_model.dart';
 import 'package:bathao/Services/ApiService.dart';
 import 'package:bathao/Widgets/MainPage/MainPage.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/services.dart' show rootBundle;
 
 String? jwsToken;
 
@@ -24,12 +27,22 @@ class RegisterController extends GetxController {
   var pickedImage = Rxn<File>();
   List<String> languages = [];
   var isLoading = false.obs;
+  final String defaultSticker = "assets/stickers/sticker1.png";
+  RxString selectedSticker = "assets/stickers/man.png".obs;
 
   // Pick from gallery
   Future<void> pickFromGallery() async {
     final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
     if (image != null) {
       pickedImage.value = File(image.path);
+    }
+  }
+
+  void pickImageFromGalleryOrCamera(ImageSource source) async {
+    final pickedFile = await _picker.pickImage(source: source);
+    if (pickedFile != null) {
+      pickedImage.value = File(pickedFile.path);
+      // clear sticker if image picked
     }
   }
 
@@ -41,13 +54,12 @@ class RegisterController extends GetxController {
     }
   }
 
-  Future registerUser(String name, String number) async {
+  Future registerUser(String name, String number, String countryCode) async {
     final endpoint = 'api/v1/user/register';
 
     // Check if profile image is picked
     if (pickedImage.value == null) {
-      print("No profile image selected.");
-      return;
+      await assignStickerAsFile(selectedSticker.value);
     }
     final data = {
       "name": name,
@@ -56,6 +68,7 @@ class RegisterController extends GetxController {
           dobController
               .text, // Assuming you meant dateOfBirth, not gender twice
       "phone": number,
+      'countryCode': countryCode,
       "profilePic": pickedImage.value,
       'langs': languages, // Important: This must be a File
     };
@@ -84,6 +97,24 @@ class RegisterController extends GetxController {
       rethrow;
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  Future<void> assignStickerAsFile(String assetPath) async {
+    try {
+      final byteData = await rootBundle.load(assetPath);
+      final tempDir = await getTemporaryDirectory();
+
+      // Unique filename based on time or sticker name
+      final filename = 'sticker_${DateTime.now().millisecondsSinceEpoch}.png';
+
+      final file = File('${tempDir.path}/$filename');
+      await file.writeAsBytes(byteData.buffer.asUint8List());
+
+      pickedImage.value = file;
+      selectedSticker.value = assetPath;
+    } catch (e) {
+      print("Error converting sticker to file: $e");
     }
   }
 }

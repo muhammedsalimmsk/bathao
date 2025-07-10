@@ -21,6 +21,7 @@ class MainPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Obx(
       () => Scaffold(
+        resizeToAvoidBottomInset: false,
         backgroundColor: AppColors.scaffoldColor,
         extendBody: true,
         body: Stack(
@@ -66,7 +67,7 @@ class MainPage extends StatelessWidget {
                     ),
                     _navItem(
                       icon: Icons.monetization_on,
-                      label: "Coin Purchase",
+                      label: "Wallet",
                       index: 2,
                       controller: controller,
                     ),

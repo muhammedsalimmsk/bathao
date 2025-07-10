@@ -15,6 +15,7 @@ class ListenerController extends GetxController {
   bool hasMore = true;
   int currentPage = 1; // Start from page 0
   final int limit = 10;
+  List langs = [];
 
   final ApiService _apiService = ApiService();
 
@@ -38,7 +39,8 @@ class ListenerController extends GetxController {
     try {
       final response = await _apiService.getRequest(
         'api/v1/user/get-receivers?page=$currentPage&limit=$limit'
-        '&sortOrder=$sortOrder&search=$searchQuery',
+        '&sortOrder=$sortOrder&search=$searchQuery'
+        '&langs=${langs.join(',')}',
         bearerToken: jwsToken,
       );
 

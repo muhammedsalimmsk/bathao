@@ -8,10 +8,12 @@ import '../../Theme/Colors.dart';
 class LanguageSelectionPage extends StatelessWidget {
   final String phoneNumber;
   final String name;
+  final String countryCode;
   LanguageSelectionPage({
     super.key,
     required this.phoneNumber,
     required this.name,
+    required this.countryCode,
   });
   final List<Map<String, dynamic>> languages = [
     {
@@ -200,7 +202,11 @@ class LanguageSelectionPage extends StatelessWidget {
                                 )
                                 : InkWell(
                                   onTap: () {
-                                    controller.registerUser(name, phoneNumber);
+                                    controller.registerUser(
+                                      name,
+                                      phoneNumber,
+                                      countryCode,
+                                    );
                                   },
                                   child: Container(
                                     decoration: BoxDecoration(

@@ -1,5 +1,6 @@
 import 'package:bathao/Controllers/AuthController/AuthController.dart';
 import 'package:bathao/Controllers/CallController/CallController.dart';
+import 'package:bathao/Controllers/HomeController/HomeController.dart';
 import 'package:bathao/Controllers/PaymentController/PaymentController.dart';
 import 'package:bathao/Screens/HomePage/Widget/CustomAppBar.dart';
 import 'package:bathao/Services/ApiService.dart';
@@ -18,6 +19,7 @@ class HomePage extends StatelessWidget {
   HomePage({super.key});
   final PaymentController controller = Get.put(PaymentController());
   final CallController callController = Get.put(CallController());
+  final HomeController homeController = Get.put(HomeController());
 
   @override
   Widget build(BuildContext context) {
@@ -79,13 +81,94 @@ class HomePage extends StatelessWidget {
     );
     return Scaffold(
       backgroundColor: AppColors.scaffoldColor,
-      appBar: CustomHomeAppBar(
-        userName: userModel!.user!.name!,
-        coinCount: controller.totalCoin,
-        profileImageUrl:
-            userModel!.user!.profilePic == null
-                ? "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?q=80&w=2671&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                : "$baseImageUrl${userModel!.user!.profilePic!}",
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(
+          homeController.showSearchInAppBar.value ? 60 : 180,
+        ),
+        child: Obx(
+          () =>
+              homeController.showSearchInAppBar.value
+                  ? Container(
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFF000D64), Color(0xFF081DAA)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: const BorderRadius.vertical(
+                        bottom: Radius.circular(30),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        // 👤 Profile image
+                        CircleAvatar(
+                          radius: 25,
+                          backgroundImage: NetworkImage(
+                            userModel!.user!.profilePic == null
+                                ? "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?q=80&w=2671&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                                : "$baseImageUrl${userModel!.user!.profilePic!}",
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        // 👋 Greeting
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "Hello, ${userModel!.user!.name!}",
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const Text(
+                              "welcome Bathao",
+                              style: TextStyle(color: Colors.white70),
+                            ),
+                          ],
+                        ),
+                        const Spacer(),
+                        // 🪙 Coins
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text(
+                              "Available Coins",
+                              style: TextStyle(color: Colors.white70),
+                            ),
+                            Row(
+                              children: [
+                                const Icon(Icons.stars, color: Colors.amber),
+                                const SizedBox(width: 4),
+                                Obx(
+                                  () => Text(
+                                    controller.totalCoin.value.toString(),
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  )
+                  : CustomHomeAppBar(
+                    userName: userModel!.user!.name!,
+                    coinCount: controller.totalCoin,
+                    profileImageUrl:
+                        userModel!.user!.profilePic == null
+                            ? "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?q=80&w=2671&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                            : "$baseImageUrl${userModel!.user!.profilePic!}",
+                  ),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -102,12 +185,12 @@ class HomePage extends StatelessWidget {
               ),
             ),
             LanguageChips(
-              languages: ['English', 'Malayalam', 'Kannada', 'Arabic'],
-              onTap: (lang) {
-                print('Selected: $lang');
-              },
+              languages: ['English', 'Malayalam', 'Kannada', 'Arabic', 'Tamil'],
             ),
-            SizedBox(height: 520, child: ListenerListWidget()),
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.56,
+              child: ListenerListWidget(),
+            ),
           ],
         ),
       ),

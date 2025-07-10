@@ -15,6 +15,7 @@ import 'package:zego_uikit_signaling_plugin/zego_uikit_signaling_plugin.dart';
 import 'Screens/AuthPage/LoginPage.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
+String? receiverId;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final prefs = await SharedPreferences.getInstance();

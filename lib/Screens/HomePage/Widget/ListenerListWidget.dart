@@ -40,8 +40,10 @@ class ListenerListWidget extends StatelessWidget {
                 age: getAgeOrNA(controller.listenerData[index].dateOfBirth),
                 gender: controller.listenerData[index].gender!,
                 imageUrl: controller.listenerData[index].profilePic,
+                audioRate: controller.listenerData[index].audioRate!,
+                videoRate: controller.listenerData[index].videoRate!,
+                callType: controller.listenerData[index].callType!,
                 coins: 3,
-                stars: 3,
                 status: controller.listenerData[index].status!,
                 userId: controller.listenerData[index].id!,
               );

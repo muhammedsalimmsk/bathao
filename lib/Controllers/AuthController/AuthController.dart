@@ -47,7 +47,8 @@ class AuthController extends GetxController {
 
   Future verifyOTP() async {
     final data = {
-      'phone': '$selectedCountryCode ${phoneController.text}',
+      'countryCode': selectedCountryCode.value,
+      'phone': phoneController.text,
       'otp': otp.value,
     };
     isLoading.value = true;
@@ -64,10 +65,13 @@ class AuthController extends GetxController {
           preferences.setString("token", token!);
           jwsToken = token;
           await getUserData();
-          Get.off(MainPage());
+          Get.offAll(MainPage());
         } else {
           Get.to(
-            RegisterPage(phone: '$selectedCountryCode ${phoneController.text}'),
+            RegisterPage(
+              phone: phoneController.text,
+              countryCode: selectedCountryCode.value,
+            ),
           );
         }
       } else {
@@ -114,7 +118,10 @@ class AuthController extends GetxController {
   }
 
   Future sendOtpToUser() async {
-    final data = {'phone': '$selectedCountryCode ${phoneController.text}'};
+    final data = {
+      'phone': phoneController.text,
+      'countryCode': selectedCountryCode.value,
+    };
     isLoading.value = true;
     try {
       print(data);

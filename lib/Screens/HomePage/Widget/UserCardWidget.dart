@@ -5,34 +5,37 @@ import 'package:get/get.dart';
 import 'package:bathao/Controllers/CallController/CallController.dart';
 import 'package:bathao/Theme/Colors.dart';
 import 'package:flutter/material.dart';
-import 'package:zego_uikit/zego_uikit.dart';
-import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 
 class UserCard extends StatelessWidget {
   final String name;
   final String age;
   final String gender;
   final String? imageUrl;
+  final String callType;
   final int coins;
-  final int stars;
   final String status;
   final String userId;
+  final int audioRate;
+  final int videoRate;
 
   const UserCard({
     super.key,
     required this.name,
     required this.age,
+    required this.callType,
     required this.gender,
     required this.imageUrl,
     required this.coins,
-    required this.stars,
     required this.status,
     required this.userId,
+    required this.audioRate,
+    required this.videoRate,
   });
 
   @override
   Widget build(BuildContext context) {
     CallController callController = Get.put(CallController());
+
     Color getRandomColor() {
       final Random random = Random();
       return Color.fromARGB(
@@ -57,11 +60,10 @@ class UserCard extends StatelessWidget {
     }
 
     final Color statusColor = getStatusColor();
-    print("userId is $userId");
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
       child: Container(
-        height: 100,
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: const Color(0xFF2D2A2A),
@@ -149,32 +151,45 @@ class UserCard extends StatelessWidget {
             ),
             Column(
               mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   children: [
-                    const Icon(Icons.monetization_on, color: Colors.orange),
+                    const Icon(Icons.call, color: Colors.greenAccent, size: 18),
+                    const SizedBox(width: 4),
                     Text(
-                      " ${coins.toString().padLeft(2, '0')}",
+                      "$audioRate",
                       style: const TextStyle(color: Colors.white),
                     ),
-                    const SizedBox(width: 8),
-                    Container(height: 20, width: 1, color: Colors.grey),
-                    const SizedBox(width: 8),
-                    const Icon(Icons.star, color: Colors.orangeAccent),
+                    const SizedBox(width: 10),
+                    const Icon(
+                      Icons.videocam,
+                      color: Colors.redAccent,
+                      size: 18,
+                    ),
+                    const SizedBox(width: 4),
                     Text(
-                      " $stars",
+                      "$videoRate",
                       style: const TextStyle(color: Colors.white),
                     ),
                   ],
                 ),
+                const SizedBox(height: 10),
                 Row(
-                  spacing: 10,
                   children: [
-                    MyCustomCallButton(userId: userId, name: name),
                     MyCustomCallButton(
                       userId: userId,
                       name: name,
+                      status: status,
+                      isEnabled: callType == "audio" || callType == "both",
+                    ),
+                    const SizedBox(width: 10),
+                    MyCustomCallButton(
+                      userId: userId,
+                      name: name,
+                      status: status,
                       isVideoCall: true,
+                      isEnabled: callType == "video" || callType == "both",
                     ),
                   ],
                 ),

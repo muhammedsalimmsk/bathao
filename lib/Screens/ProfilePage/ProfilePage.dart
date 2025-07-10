@@ -5,6 +5,7 @@ import 'package:bathao/Theme/Colors.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ProfilePage extends StatelessWidget {
   @override
@@ -78,6 +79,7 @@ class ProfilePage extends StatelessWidget {
                   icon: Icons.privacy_tip,
                   label: "Privacy Policy",
                   onTap: () {
+                    launchPrivacy();
                     // Navigate to Privacy Policy page
                   },
                 ),
@@ -85,21 +87,26 @@ class ProfilePage extends StatelessWidget {
                   icon: Icons.support_agent,
                   label: "Get Support",
                   onTap: () {
+                    sendEmail();
                     // Open email or support chat
-                  },
-                ),
-                _buildActionTile(
-                  icon: Icons.star_rate,
-                  label: "Rate Us",
-                  onTap: () {
-                    // Redirect to Play Store or rating dialog
                   },
                 ),
                 _buildActionTile(
                   icon: Icons.info_outline,
                   label: "About Us",
                   onTap: () {
+                    launchAbout();
                     // Navigate to About page
+                  },
+                ),
+                _buildActionTile(
+                  icon: Icons.logout,
+                  label: 'Logout',
+                  onTap: () async {
+                    SharedPreferences pref =
+                        await SharedPreferences.getInstance();
+                    pref.remove('token');
+                    Get.offAll(LoginPage());
                   },
                 ),
               ],
@@ -109,26 +116,26 @@ class ProfilePage extends StatelessWidget {
           SizedBox(height: 10),
 
           // Logout button
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
-            child: ElevatedButton.icon(
-              onPressed: () async {
-                SharedPreferences pref = await SharedPreferences.getInstance();
-                pref.remove('token');
-                Get.offAll(LoginPage());
-              },
-              icon: const Icon(Icons.logout),
-              label: const Text("Logout"),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.onBoardPrimary,
-                foregroundColor: Colors.white,
-                minimumSize: const Size.fromHeight(50),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-              ),
-            ),
-          ),
+          // Padding(
+          //   padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+          //   child: ElevatedButton.icon(
+          //     onPressed: () async {
+          //       SharedPreferences pref = await SharedPreferences.getInstance();
+          //       pref.remove('token');
+          //       Get.offAll(LoginPage());
+          //     },
+          //     icon: const Icon(Icons.logout),
+          //     label: const Text("Logout"),
+          //     style: ElevatedButton.styleFrom(
+          //       backgroundColor: AppColors.onBoardPrimary,
+          //       foregroundColor: Colors.white,
+          //       minimumSize: const Size.fromHeight(50),
+          //       shape: RoundedRectangleBorder(
+          //         borderRadius: BorderRadius.circular(16),
+          //       ),
+          //     ),
+          //   ),
+          // ),
         ],
       ),
     );
@@ -180,10 +187,10 @@ class ProfilePage extends StatelessWidget {
   }) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: InkWell(
+      child: GestureDetector(
         onTap: onTap,
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           decoration: BoxDecoration(
             color: AppColors.onBoardSecondary,
             borderRadius: BorderRadius.circular(16),
@@ -207,5 +214,26 @@ class ProfilePage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<void> launchPrivacy() async {
+    final Uri url = Uri.parse('https://bathaocalls.com/privacy_policy.html');
+    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+      throw 'Could not launch $url';
+    }
+  }
+
+  Future<void> launchAbout() async {
+    final Uri url = Uri.parse('https://bathaocalls.com/#about');
+    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+      throw 'Could not launch $url';
+    }
+  }
+
+  Future<void> sendEmail() async {
+    final Uri emailUri = Uri(scheme: 'mailto', path: 'bathaoapp@gmail.com');
+    if (!await launchUrl(emailUri)) {
+      throw 'Could not launch $emailUri';
+    }
   }
 }

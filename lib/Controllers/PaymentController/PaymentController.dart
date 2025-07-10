@@ -1,101 +1,35 @@
-// controllers/payment_controller.dart
 import 'dart:async';
 import 'dart:convert';
 import 'package:bathao/Controllers/AuthController/RegisterController.dart';
 import 'package:bathao/Models/plan_model/plan.dart';
 import 'package:bathao/Models/plan_model/plan_model.dart';
+import 'package:bathao/Models/recharge_model/history.dart';
+import 'package:bathao/Models/recharge_model/recharge_model.dart';
+import 'package:bathao/Screens/CoinPurchasePage/PaymentWebView.dart';
 import 'package:bathao/Services/ApiService.dart';
 import 'package:bathao/Theme/Colors.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
-
-import '../../Screens/CoinPurchasePage/CoinPurchasePage.dart';
 
 class PaymentController extends GetxController {
   final isLoading = false.obs;
   RxString currentOrderId = ''.obs;
   RxInt totalCoin = 0.obs;
-  PlanModel model=PlanModel();
-  RxList<Plan> coinPlan=<Plan>[].obs;
+  PlanModel model = PlanModel();
+  RxList<Plan> coinPlan = <Plan>[].obs;
   final ApiService _apiService = ApiService();
   Rx<DateTime?> paymentExpiry = Rx<DateTime?>(null);
+  bool paymentSuccess = false;
   Timer? paymentTimer;
-  static const String merchantId = "WATZOP";
-  static const String apiKey = "utz_live_2ca3df4accd797bb";
-  static const String publicKey = 'utz_live_2ca3df4accd797bb';
-  static const String secretKey = '44d37239655faa322ceejlo';
-
-  String get _basicAuthHeader {
-    String credentials = '$publicKey:$secretKey';
-    String base64Str = base64Encode(utf8.encode(credentials));
-    return 'Basic $base64Str';
-  }
-
-  Future<void> initiateUPIPayment({
-    required int amountInPaise,
-    required String upiId,
-    required String customerPhone,
-    required String customerName,
-    required String customerEmail,
-  }) async {
-    const String createApiUrl =
-        "https://api.upitranzact.com/v1/payments/createPaymentRequest";
-
-    isLoading.value = true;
-
-    try {
-      final cleanedPhone = customerPhone.replaceAll(RegExp(r'[^0-9]'), '');
-      final tenDigitPhone =
-          cleanedPhone.length >= 10
-              ? cleanedPhone.substring(cleanedPhone.length - 10)
-              : cleanedPhone;
-
-      print('Original phone: $customerPhone');
-      print('Cleaned phone: $tenDigitPhone');
-      final response = await http.post(
-        Uri.parse(createApiUrl),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': _basicAuthHeader,
-        },
-        body: jsonEncode({
-          "mid": merchantId,
-          "vpa": upiId,
-          'note': "coin credit",
-          "amount": amountInPaise.toInt(),
-          'customer_name': customerName, // paise: ₹1.00 = 100
-          "customer_mobile": tenDigitPhone,
-          'customer_email': customerEmail,
-          "api_key": apiKey, // optional
-        }),
-      );
-      print(tenDigitPhone);
-      print(_basicAuthHeader);
-
-      final data = jsonDecode(response.body);
-      if (response.statusCode == 200) {
-        print(response.body);
-        final orderId = data['data']['order_id'];
-        final expiryTime = DateTime.parse(data['data']['expiry']);
-
-        currentOrderId.value = orderId;
-        print("oderid is ${currentOrderId.value}");
-        paymentExpiry.value = expiryTime;
-      } else {
-        print(response.body);
-        Get.snackbar(
-          "Payment Failed",
-          data['message'] ?? 'Something went wrong',
-        );
-      }
-    } catch (e) {
-      print(e);
-      Get.snackbar("Error", e.toString(), backgroundColor: AppColors.textColor);
-    } finally {
-      isLoading.value = false;
-    }
-  }
+  String? paymentUrl;
+  late RechargeModel rechargeModel = RechargeModel();
+  RxList<RechargeHistory> history = <RechargeHistory>[].obs;
+  int page = 1;
+  bool isLastPage = false;
+  ScrollController scrollController = ScrollController();
+  bool isLoadingMore = false;
 
   Future getCoin() async {
     final endpoint = 'api/v1/coin/get-user-coin-balance';
@@ -117,31 +51,26 @@ class PaymentController extends GetxController {
   }
 
   Future<bool> verifyPaymentStatus(String orderId) async {
-    const String statusUrl =
-        "https://api.upitranzact.com/v1/payments/checkPaymentStatus";
+    final String endpoint = "api/v1/coin/payment-status?orderId=$orderId";
     isLoading.value = true;
     try {
       print("verify order iid is $orderId");
-      print(merchantId);
-      final response = await http.post(
-        Uri.parse(statusUrl),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': _basicAuthHeader,
-        },
-        body: jsonEncode({"mid": merchantId, "order_id": orderId}),
+      final response = await _apiService.getRequest(
+        endpoint,
+        bearerToken: jwsToken,
       );
-      final data = jsonDecode(response.body);
-      if (response.statusCode == 200) {
+      if (response.isOk) {
         print(response.body);
-        await addCoinPurchase(orderId);
-        final transactionStatus = data['data']['status'];
-        return transactionStatus == "SUCCESS";
-      } else {
-        Get.snackbar("Error", data['message'] ?? "Verification failed");
+        if (response.body['txnStatus'] == 'SUCCESS') {
+          return true;
+        } else {
+          print(response.body);
+          false;
+        }
       }
     } catch (e) {
-      Get.snackbar("Error", e.toString());
+      print(e);
+      rethrow;
     } finally {
       isLoading.value = false;
     }
@@ -176,9 +105,9 @@ class PaymentController extends GetxController {
       );
       if (response.isOk) {
         print(response.body);
-        model=PlanModel.fromJson(response.body);
+        model = PlanModel.fromJson(response.body);
         coinPlan.addAll(model.plans!);
-      }else{
+      } else {
         print(response.body);
       }
     } catch (e) {
@@ -187,12 +116,211 @@ class PaymentController extends GetxController {
     }
   }
 
+  Future createPayment(String planId, String? email) async {
+    Get.dialog(
+      Center(child: CircularProgressIndicator()),
+      barrierDismissible: false,
+    );
+
+    isLoading.value = true;
+    final endpoint = 'api/v1/coin/recharge';
+    final data = {"planId": planId, "email": email};
+    try {
+      final response = await _apiService.postRequest(
+        endpoint,
+        data,
+        bearerToken: jwsToken,
+      );
+      if (response.isOk) {
+        print(response.body);
+        if (response.body['paymentUrl'] != null) {
+          paymentUrl = response.body['paymentUrl'];
+          final orderId = response.body['orderId'];
+          if (paymentUrl != null) {
+            await Navigator.of(Get.context!).push<bool>(
+              MaterialPageRoute(
+                builder:
+                    (context) => PaymentWebView(
+                      paymentUrl: paymentUrl!,
+                      orderId: orderId,
+                      // Your existing method
+                    ),
+              ),
+            );
+            paymentSuccess = await verifyPaymentStatus(orderId);
+
+            // 3. Handle result
+          }
+        }
+      }
+    } catch (e) {
+      rethrow;
+    } finally {
+      isLoading.value = false;
+      isLoadingMore = false;
+      await getRechargeHistory(isInitial: true);
+      Get.back(); // dismiss the loading dialog
+      if (paymentSuccess) {
+        Get.dialog(
+          Dialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            backgroundColor: Colors.white,
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.check_circle, color: Colors.green, size: 60),
+                  const SizedBox(height: 10),
+                  Text(
+                    "Congratulations!",
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    "Recharge Successful",
+                    style: TextStyle(fontSize: 16, color: Colors.black54),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.textColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    onPressed: () {
+                      Get.back(); // Close the dialog
+                    },
+                    child: Text("OK"),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+
+        await getCoin();
+
+        // Refresh coin balance or other post-payment logic
+      } else {
+        Get.snackbar(
+          'Cancelled',
+          'Payment was not completed',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: AppColors.textColor,
+        );
+      }
+      paymentSuccess = false;
+    }
+  }
+
+  Future<void> launchPaymentFlow({
+    required String paymentUrl,
+    required String orderId,
+    required Future<bool> Function(String orderId) verifyPaymentStatus,
+  }) async {
+    try {
+      final encodedUrl = Uri.encodeFull(paymentUrl);
+      final uri = Uri.parse(paymentUrl);
+
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+
+        // ✅ After user completes or cancels, show dialog to verify
+        Get.defaultDialog(
+          backgroundColor: AppColors.onBoardSecondary,
+          title: "Verify Payment",
+          middleText: "Have you completed the payment?",
+          textConfirm: "Yes",
+          textCancel: "Cancel",
+          onConfirm: () async {
+            await getRechargeHistory();
+            Get.back(); // close dialog
+            final verified = await verifyPaymentStatus(orderId);
+            if (verified) {
+              Get.defaultDialog(
+                title: "Success",
+                middleText: "Coins added successfully 🎉",
+                textConfirm: "OK",
+                onConfirm: () async {
+                  print("ssssssssjjjjjjjjjjssssssssssss");
+
+                  Get.back();
+                },
+              );
+            } else {
+              Get.snackbar("Pending", "Payment is not yet confirmed.");
+            }
+          },
+          onCancel: () {
+            Get.snackbar("Cancelled", "Payment was cancelled.");
+          },
+        );
+      } else {
+        Get.snackbar("Error", "Unable to open payment link.");
+      }
+    } catch (e) {
+      Get.snackbar("Error", "Failed to start payment: $e");
+    }
+  }
+
+  Future<void> getRechargeHistory({bool isInitial = false}) async {
+    if (isLoadingMore || isLastPage) return;
+    print('ssssssssssssssssssssssssssssssssssssssssssssssssssssssss');
+    isLoadingMore = true;
+    if (isInitial) {
+      page = 1;
+      history.clear();
+    }
+
+    final endpoint = "api/v1/coin/recharge-history?page=$page&limit=10";
+    try {
+      final response = await _apiService.getRequest(
+        endpoint,
+        bearerToken: jwsToken,
+      );
+      if (response.isOk) {
+        print(response.body);
+        rechargeModel = RechargeModel.fromJson(response.body);
+        if (rechargeModel.history == null || rechargeModel.history!.isEmpty) {
+          isLastPage = true;
+        } else {
+          history.addAll(rechargeModel.history!);
+          page++;
+        }
+      } else {
+        print(response.body);
+      }
+    } catch (e) {
+      print(e);
+    } finally {
+      isLoadingMore = false;
+    }
+  }
+
   @override
   void onInit() async {
     // TODO: implement onInit
     super.onInit();
-   await getCoin();
-    await  getPlan();
+    scrollController.addListener(() {
+      if (scrollController.position.pixels >=
+          scrollController.position.maxScrollExtent - 100) {
+        getRechargeHistory(); // Load next page
+      }
+    });
+
+    getRechargeHistory(isInitial: true); // Load first page
+
+    await getCoin();
+    await getPlan();
   }
 
   @override

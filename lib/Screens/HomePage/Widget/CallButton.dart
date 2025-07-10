@@ -4,77 +4,100 @@ import 'package:bathao/Theme/Colors.dart';
 import 'package:flutter/material.dart';
 import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 import 'package:get/get.dart';
+import '../../../main.dart';
 
 class MyCustomCallButton extends StatelessWidget {
   final String userId;
+  final String status;
   final String name;
   final bool isVideoCall;
+  final bool isEnabled;
 
   MyCustomCallButton({
     super.key,
     required this.userId,
+    required this.status,
     required this.name,
     this.isVideoCall = false,
+    required this.isEnabled,
   });
-  PaymentController controller = Get.find();
-  CallController callController = Get.find();
+
+  final PaymentController controller = Get.find();
+  final CallController callController = Get.find();
+
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {
-        print(controller.totalCoin.value);
-        callController.receiverId = userId;
+      onTap:
+          isEnabled
+              ? () {
+                print(controller.totalCoin.value);
+                receiverId = userId;
 
-        if (controller.totalCoin.value >= 100) {
-          if (isVideoCall) {
-            if (controller.totalCoin.value >= 200) {
-              callController.callType = "video";
-
-              ZegoUIKitPrebuiltCallInvitationService().send(
-                isVideoCall: true,
-                invitees: [ZegoCallUser(userId, name)],
-                resourceID: "zegouikit_call",
-              );
-            } else {
-              Get.snackbar(
-                "Insufficient balance",
-                "You need at least 200 coins for a video call",
-                snackPosition: SnackPosition.BOTTOM,
-                backgroundColor: AppColors.textColor,
-              );
-            }
-          } else {
-            callController.callType = "audio";
-            // Audio call, needs at least 100 coins
-            callController.receiverId = userId;
-            ZegoUIKitPrebuiltCallInvitationService().send(
-              isVideoCall: false,
-              invitees: [ZegoCallUser(userId, name)],
-              resourceID: "zegouikit_call",
-            );
-          }
-        } else {
-          Get.snackbar(
-            "Insufficient balance",
-            "Please recharge your coin balance",
-            snackPosition: SnackPosition.BOTTOM,
-            backgroundColor: AppColors.textColor,
-          );
-        }
-      },
+                if (controller.totalCoin.value >= 100) {
+                  if (status == "online") {
+                    if (isVideoCall) {
+                      if (controller.totalCoin.value >= 200) {
+                        callController.callType = "video";
+                        ZegoUIKitPrebuiltCallInvitationService().send(
+                          isVideoCall: true,
+                          invitees: [ZegoCallUser(userId, name)],
+                          resourceID: "zegouikit_call",
+                        );
+                      } else {
+                        Get.snackbar(
+                          "Insufficient balance",
+                          "You need at least 200 coins for a video call",
+                          snackPosition: SnackPosition.BOTTOM,
+                          backgroundColor: AppColors.textColor,
+                        );
+                      }
+                    } else {
+                      callController.callType = "audio";
+                      ZegoUIKitPrebuiltCallInvitationService().send(
+                        isVideoCall: false,
+                        invitees: [ZegoCallUser(userId, name)],
+                        resourceID: "zegouikit_call",
+                      );
+                    }
+                  } else if (status == "busy") {
+                    Get.snackbar(
+                      "User Busy",
+                      "The user is currently on another call",
+                      backgroundColor: Colors.white,
+                      snackPosition: SnackPosition.BOTTOM,
+                    );
+                  } else {
+                    Get.snackbar(
+                      "Offline",
+                      "Recipient is not available right now.",
+                      backgroundColor: Colors.white,
+                      snackPosition: SnackPosition.BOTTOM,
+                    );
+                  }
+                } else {
+                  Get.snackbar(
+                    "Insufficient balance",
+                    "Please recharge your coin balance",
+                    snackPosition: SnackPosition.BOTTOM,
+                    backgroundColor: AppColors.textColor,
+                  );
+                }
+              }
+              : null, // ❌ No tap if not enabled
       child: Container(
         width: 40,
         height: 40,
         decoration: BoxDecoration(
-          color: AppColors.onBoardPrimary, // 🔵 Blue background
-          shape: BoxShape.circle, // 🎯 Round button
+          color:
+              isEnabled
+                  ? AppColors.onBoardPrimary
+                  : Colors.grey, // ⚠️ Grey if disabled
+          shape: BoxShape.circle,
         ),
         child: Icon(
-          isVideoCall
-              ? Icons.videocam_rounded
-              : Icons.call, // 📞 You can use Icons.videocam for video
-          color: Colors.white, // ⚪ White icon
-          size: 30,
+          isVideoCall ? Icons.videocam_rounded : Icons.call,
+          color: Colors.white,
         ),
       ),
     );

@@ -1,32 +1,38 @@
 import 'dart:io';
 
 import 'package:bathao/Controllers/AuthController/RegisterController.dart';
+import 'package:bathao/Theme/Colors.dart';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
+
+import '../Screens/StickerPickerPage/StickerPickerPage.dart';
 
 class ProfileImagePicker extends StatelessWidget {
-  final String imageUrl =
-      "https://img.freepik.com/premium-photo/arabic-man_21730-4132.jpg";
-
-  const ProfileImagePicker({super.key}); // Replace with actual image or file
+  const ProfileImagePicker({super.key});
 
   @override
   Widget build(BuildContext context) {
     final RegisterController controller = Get.find();
     return Row(
       children: [
-        // Profile Image with edit icon (Gallery)
         Stack(
           children: [
             Obx(() {
               final File? imageFile = controller.pickedImage.value;
+              final String sticker = controller.selectedSticker.value;
+
               return CircleAvatar(
                 radius: 40,
                 backgroundColor: Colors.grey[300],
                 backgroundImage:
-                    imageFile != null ? FileImage(imageFile) : null,
+                    imageFile != null
+                        ? FileImage(imageFile)
+                        : (sticker.isNotEmpty ? AssetImage(sticker) : null)
+                            as ImageProvider?,
                 child:
-                    imageFile == null
+                    imageFile == null && sticker.isEmpty
                         ? const Icon(
                           Icons.person,
                           size: 40,
@@ -39,24 +45,26 @@ class ProfileImagePicker extends StatelessWidget {
               bottom: 0,
               right: 0,
               child: GestureDetector(
-                onTap: controller.pickFromGallery,
+                onTap: () => Get.to(() => const StickerPickerPage()),
                 child: Container(
                   decoration: const BoxDecoration(
                     shape: BoxShape.circle,
                     color: Colors.white,
                   ),
                   padding: const EdgeInsets.all(6),
-                  child: const Icon(Icons.edit, size: 18, color: Colors.black),
+                  child: const Icon(
+                    Icons.emoji_emotions,
+                    size: 18,
+                    color: Colors.black,
+                  ),
                 ),
               ),
             ),
           ],
         ),
         const SizedBox(width: 24),
-
-        // Camera icon
         GestureDetector(
-          onTap: controller.pickFromCamera,
+          onTap: () => _showImageSourceSheet(context, controller),
           child: Container(
             width: 70,
             height: 70,
@@ -77,6 +85,44 @@ class ProfileImagePicker extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+
+  void _showImageSourceSheet(
+    BuildContext context,
+    RegisterController controller,
+  ) {
+    showModalBottomSheet(
+      backgroundColor: AppColors.scaffoldColor,
+      context: context,
+      builder:
+          (context) => Wrap(
+            children: [
+              ListTile(
+                leading: Icon(Icons.photo, color: AppColors.textColor),
+                title: Text(
+                  "Pick from Gallery",
+                  style: TextStyle(color: AppColors.textColor),
+                ),
+                onTap: () {
+                  Navigator.pop(context);
+                  controller.pickImageFromGalleryOrCamera(ImageSource.gallery);
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.camera, color: AppColors.textColor),
+                title: Text(
+                  "Pick from Camera",
+                  style: TextStyle(color: AppColors.textColor),
+                ),
+                onTap: () {
+                  Navigator.pop(context);
+                  controller.pickImageFromGalleryOrCamera(ImageSource.camera);
+                },
+              ),
+              SizedBox(height: 10),
+            ],
+          ),
     );
   }
 }

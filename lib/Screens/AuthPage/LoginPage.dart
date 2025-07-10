@@ -5,6 +5,7 @@ import 'package:bathao/Widgets/TermsCheckBox.dart';
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../Controllers/AuthController/AuthController.dart';
 import '../../Theme/Colors.dart';
@@ -85,8 +86,11 @@ class LoginPage extends StatelessWidget {
                                       country.dialCode ?? '+91',
                                     ),
                                 initialSelection: 'IN',
+                                backgroundColor: AppColors.onBoardPrimary,
                                 showCountryOnly: false,
                                 showOnlyCountryWhenClosed: false,
+                                dialogBackgroundColor:
+                                    AppColors.onBoardSecondary,
                                 alignLeft: false,
                                 padding: EdgeInsets.zero,
                                 textStyle: TextStyle(
@@ -124,7 +128,9 @@ class LoginPage extends StatelessWidget {
 
                         TermsCheckbox(
                           isChecked: controller.isAgreed,
-                          onTapTerms: () {},
+                          onTapTerms: () async {
+                            await openWebsite();
+                          },
                         ),
                         SizedBox(height: 10),
                         Center(
@@ -237,5 +243,14 @@ class LoginPage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<void> openWebsite() async {
+    final Uri url = Uri.parse(
+      'https://bathaocalls.com/terms_and_conditions.html',
+    );
+    if (!await launchUrl(url)) {
+      throw 'Could not launch $url';
+    }
   }
 }

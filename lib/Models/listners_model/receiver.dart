@@ -9,6 +9,8 @@ class Receiver {
   String? callType;
   DateTime? dateOfBirth;
   String? profilePic;
+  int? audioRate;
+  int? videoRate;
 
   Receiver({
     this.id,
@@ -21,6 +23,8 @@ class Receiver {
     this.callType,
     this.dateOfBirth,
     this.profilePic,
+    this.audioRate,
+    this.videoRate,
   });
 
   factory Receiver.fromJson(Map<String, dynamic> json) => Receiver(
@@ -40,6 +44,8 @@ class Receiver {
             ? null
             : DateTime.parse(json['dateOfBirth']),
     profilePic: json['profilePic'] as String?,
+    audioRate: json['audioRate'] as int?,
+    videoRate: json['videoRate'] as int?,
   );
 
   Map<String, dynamic> toJson() => {
@@ -53,5 +59,7 @@ class Receiver {
     'callType': callType,
     'dateOfBirth': dateOfBirth?.toIso8601String(),
     'profilePic': profilePic,
+    'videoRate': videoRate,
+    'audioRate': audioRate,
   };
 }

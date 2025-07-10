@@ -142,6 +142,7 @@ class CallHistoryPage extends StatelessWidget {
                   ),
                 ),
               ),
+              SizedBox(height: 40),
             ],
           ),
         ),

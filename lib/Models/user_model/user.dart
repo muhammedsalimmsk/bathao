@@ -2,6 +2,7 @@ class User {
   String? id;
   String? phone;
   String? name;
+  String? email;
   String? profilePic;
   List<dynamic>? langs;
   DateTime? lastLogin;
@@ -12,6 +13,7 @@ class User {
     this.id,
     this.phone,
     this.name,
+    this.email,
     this.langs,
     this.lastLogin,
     this.createdAt,
@@ -23,6 +25,7 @@ class User {
     id: json['_id'] as String?,
     phone: json['phone'] as String?,
     name: json['name'] as String?,
+    email: json['email'] as String?,
     langs: json['langs'] as List<dynamic>?,
     profilePic: json['profilePic'] as String?,
     lastLogin:
@@ -43,6 +46,7 @@ class User {
     '_id': id,
     'phone': phone,
     'name': name,
+    'email': email,
     'langs': langs,
     'profilePic': profilePic,
     'lastLogin': lastLogin?.toIso8601String(),

@@ -1,9 +1,10 @@
+import 'package:bathao/Theme/Colors.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'ProfileConnectPainter.dart';
 
-class CustomHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
+class CustomHomeAppBar extends StatelessWidget {
   final String userName;
   final RxInt coinCount;
   final String profileImageUrl;
@@ -16,18 +17,23 @@ class CustomHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   });
 
   @override
-  Size get preferredSize => const Size.fromHeight(180);
-
-  @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
           colors: [Color(0xFF000D64), Color(0xFF081DAA)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.vertical(bottom: Radius.circular(30)),
+        borderRadius: const BorderRadius.vertical(bottom: Radius.circular(30)),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.borderColor,
+            offset: const Offset(0, 1),
+            blurRadius: 12,
+            spreadRadius: 1,
+          ),
+        ],
       ),
       child: SafeArea(
         child: Padding(
@@ -40,7 +46,7 @@ class CustomHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                 top: 20,
                 bottom: 20,
                 child: CustomPaint(
-                  size: const Size(70, 120),
+                  size: const Size(90, 170),
                   painter: ProfileConnectorPainter(),
                 ),
               ),
@@ -50,7 +56,7 @@ class CustomHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                 children: [
                   // 👤 Profile image
                   CircleAvatar(
-                    radius: 38,
+                    radius: 35,
                     backgroundImage: NetworkImage(profileImageUrl),
                   ),
                   const SizedBox(width: 16),
