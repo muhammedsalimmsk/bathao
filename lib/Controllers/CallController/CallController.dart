@@ -8,7 +8,7 @@ import 'package:get/get.dart';
 class CallController extends GetxController {
   final ApiService _apiService = ApiService();
   PaymentController controller = Get.put(PaymentController());
-  String callType = "voice";
+  String callType = "audio";
   String? callId;
   Future createCall(String externalUserId, bool voiceCall) async {
     final data = {
