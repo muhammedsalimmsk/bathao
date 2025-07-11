@@ -84,6 +84,7 @@ class HomePage extends StatelessWidget {
         // add more invitation events as needed
       ),
     );
+    controller.getCoin();
     return Scaffold(
       backgroundColor: AppColors.scaffoldColor,
       appBar: PreferredSize(
