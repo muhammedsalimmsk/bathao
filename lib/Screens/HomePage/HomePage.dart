@@ -7,27 +7,47 @@ import 'package:bathao/Services/ApiService.dart';
 import 'package:bathao/Services/CallApis/CallApis.dart';
 import 'package:bathao/Theme/Colors.dart';
 import 'package:flutter/material.dart';
+
+import 'package:permission_handler/permission_handler.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 import 'package:zego_uikit_signaling_plugin/zego_uikit_signaling_plugin.dart';
 import 'package:get/get.dart';
 import '../../Services/CallTracker.dart';
-import '../../main.dart';
+
 import 'Widget/LanguegeChipsWidget.dart';
 import 'Widget/ListenerListWidget.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({super.key});
   final PaymentController controller = Get.put(PaymentController());
-  final CallController callController = Get.put(CallController());
+  final CallController callController = Get.put(
+    CallController(),
+    permanent: true,
+  );
   final HomeController homeController = Get.put(HomeController());
 
   @override
   Widget build(BuildContext context) {
+    Future<void> requestCallPermissions() async {
+      // Android 13+ needs POST_NOTIFICATIONS
+      await [Permission.microphone, Permission.notification].request();
+
+      // Android 14+ specific FGS permissions (check availability first)
+      if (await Permission.microphone.isDenied ||
+          await Permission.microphone.isPermanentlyDenied) {
+        await Permission.microphone.request();
+      }
+
+      if (await Permission.audio.isDenied) {
+        await Permission.audio.request();
+      }
+    }
+
     bool _hasShownUnavailableDialog = false;
     final callTracker = CallTracker();
 
-// Your ZegoCloud initialization
+    // Your ZegoCloud initialization
     ZegoUIKitPrebuiltCallInvitationService().init(
       appSign: CallApis.appSign,
       appID: CallApis.appId,
@@ -42,12 +62,17 @@ class HomePage extends StatelessWidget {
       ),
       invitationEvents: ZegoUIKitPrebuiltCallInvitationEvents(
         onOutgoingCallAccepted: (String callID, ZegoCallUser callee) async {
-          debugPrint("📲 Callee accepted invite. callID: $callID at ${DateTime.now()}");
+          debugPrint(
+            "📲 Callee accepted invite. callID: $callID at ${DateTime.now()}",
+          );
           // Potentially set controller.callId here if it's available and not set elsewhere
-          callTracker.controller.callId = callID; // Assuming controller.callId is mutable
+          callTracker.controller.callId =
+              callID; // Assuming controller.callId is mutable
         },
         onError: (ZegoUIKitError error) {
-          debugPrint("❌ ZEGOCLOUD Error: ${error.code} - ${error.message} at ${DateTime.now()}");
+          debugPrint(
+            "❌ ZEGOCLOUD Error: ${error.code} - ${error.message} at ${DateTime.now()}",
+          );
 
           // 107026 = all called users not registered
           if (error.code == 107026 && !_hasShownUnavailableDialog) {
@@ -56,7 +81,8 @@ class HomePage extends StatelessWidget {
               barrierDismissible: false,
               backgroundColor: AppColors.onBoardSecondary,
               title: "Error",
-              middleText: "User is not online. Please call after some time.", // More specific message
+              middleText:
+                  "User is not online. Please call after some time.", // More specific message
               textConfirm: "OK",
               confirmTextColor: Colors.white,
               onConfirm: () {
@@ -64,13 +90,15 @@ class HomePage extends StatelessWidget {
                 Get.back();
               },
             );
-          } else if (error.code != 107026 && !_hasShownUnavailableDialog) { // Handle other errors generally
+          } else if (error.code != 107026 && !_hasShownUnavailableDialog) {
+            // Handle other errors generally
             _hasShownUnavailableDialog = true;
             Get.defaultDialog(
               barrierDismissible: false,
               backgroundColor: AppColors.onBoardSecondary,
               title: "Error",
-              middleText: "An error occurred. Please try again later. Code: ${error.code}",
+              middleText:
+                  "An error occurred. Please try again later. Code: ${error.code}",
               textConfirm: "OK",
               confirmTextColor: Colors.white,
               onConfirm: () {
@@ -105,70 +133,77 @@ class HomePage extends StatelessWidget {
                         bottom: Radius.circular(30),
                       ),
                     ),
-                    child: Row(
+                    child: Stack(
                       children: [
-                        // 👤 Profile image
-                        CircleAvatar(
-                          radius: 25,
-                          backgroundImage: NetworkImage(
-                            userModel!.user!.profilePic == null
-                                ? "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?q=80&w=2671&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                                : "$baseImageUrl${userModel!.user!.profilePic!}",
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        // 👋 Greeting
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.center,
+                        Row(
                           children: [
-                            Text(
-                              "Hello, ${userModel!.user!.name!}",
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
+                            // 👤 Profile image
+                            CircleAvatar(
+                              radius: 25,
+                              backgroundImage: NetworkImage(
+                                userModel!.user!.profilePic == null
+                                    ? "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?q=80&w=2671&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                                    : "$baseImageUrl${userModel!.user!.profilePic!}",
                               ),
                             ),
-                            const Text(
-                              "welcome Bathao",
-                              style: TextStyle(color: Colors.white70),
-                            ),
-                          ],
-                        ),
-                        const Spacer(),
-                        // 🪙 Coins
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Text(
-                              "Available Coins",
-                              style: TextStyle(color: Colors.white70),
-                            ),
-                            Row(
+                            const SizedBox(width: 16),
+                            // 👋 Greeting
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                const Icon(Icons.stars, color: Colors.amber),
-                                const SizedBox(width: 4),
-                                Obx(
-                                  () => Text(
-                                    controller.totalCoin.value.toString(),
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16,
-                                    ),
+                                Text(
+                                  "Hello, ${userModel!.user!.name!}",
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
                                   ),
+                                ),
+                                const Text(
+                                  "welcome Bathao",
+                                  style: TextStyle(color: Colors.white70),
                                 ),
                               ],
                             ),
+                            // 🪙 Coins
                           ],
+                        ),
+                        Positioned(
+                          top: 10,
+                          right: 0,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Text(
+                                "Available Coins",
+                                style: TextStyle(color: Colors.white70),
+                              ),
+                              Row(
+                                children: [
+                                  const Icon(Icons.stars, color: Colors.amber),
+                                  const SizedBox(width: 4),
+                                  Obx(
+                                    () => Text(
+                                      totalCoin.value.toString(),
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
                   )
                   : CustomHomeAppBar(
                     userName: userModel!.user!.name!,
-                    coinCount: controller.totalCoin,
+                    coinCount: totalCoin,
                     profileImageUrl:
                         userModel!.user!.profilePic == null
                             ? "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?q=80&w=2671&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"

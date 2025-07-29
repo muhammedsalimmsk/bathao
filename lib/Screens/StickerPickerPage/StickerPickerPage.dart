@@ -17,7 +17,7 @@ class StickerPickerPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.find<RegisterController>();
+    final controller = Get.put(RegisterController());
 
     return Scaffold(
       body: Container(

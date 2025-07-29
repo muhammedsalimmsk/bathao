@@ -3,12 +3,12 @@ import 'dart:io';
 import 'package:get/get.dart';
 import 'package:get/get_connect/connect.dart';
 
-final baseImageUrl = 'https://bathao-backend.onrender.com';
+final baseImageUrl = 'https://api.bathaocalls.com';
 
 class ApiService extends GetConnect {
   ApiService() {
     // Set your base URL
-    baseUrl = "https://bathao-backend.onrender.com/";
+    baseUrl = "https://api.bathaocalls.com/";
   }
   Future<Response> getRequest(String endpoint, {String? bearerToken}) async {
     try {
@@ -61,6 +61,50 @@ class ApiService extends GetConnect {
         print("Final URL: ${baseUrl! + endpoint}");
 
         return await post(endpoint, data, headers: headers);
+      }
+    } catch (e) {
+      print("Error in POST request: $e");
+      rethrow;
+    }
+  }
+
+  Future<Response> putRequest(
+    String endpoint,
+    dynamic data, {
+    String? bearerToken,
+    bool isMultipart = false,
+  }) async {
+    try {
+      // Add headers
+      final headers = {
+        if (bearerToken != null) 'Authorization': 'Bearer $bearerToken',
+      };
+
+      // Check if the request is multipart
+      if (isMultipart && data is Map<String, dynamic>) {
+        // Create FormData for multipart upload
+        final formData = FormData(
+          data.map((key, value) {
+            if (value is File) {
+              return MapEntry(
+                key,
+                MultipartFile(value, filename: value.path.split('/').last),
+              );
+            } else {
+              return MapEntry(key, value.toString());
+            }
+          }),
+        );
+
+        // Send POST request
+        return await put(endpoint, formData, headers: headers);
+      } else {
+        // For JSON requests
+        print("post request is done");
+        print(endpoint);
+        print("Final URL: ${baseUrl! + endpoint}");
+
+        return await put(endpoint, data, headers: headers);
       }
     } catch (e) {
       print("Error in POST request: $e");

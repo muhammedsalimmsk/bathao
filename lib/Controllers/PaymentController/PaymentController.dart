@@ -13,10 +13,12 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 
+RxInt totalCoin = 0.obs;
+
 class PaymentController extends GetxController {
   final isLoading = false.obs;
   RxString currentOrderId = ''.obs;
-  RxInt totalCoin = 0.obs;
+
   PlanModel model = PlanModel();
   RxList<Plan> coinPlan = <Plan>[].obs;
   final ApiService _apiService = ApiService();

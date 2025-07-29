@@ -7,6 +7,7 @@ import 'package:bathao/Widgets/MainPage/MainPage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:screen_secure/screen_secure.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
@@ -18,6 +19,7 @@ final navigatorKey = GlobalKey<NavigatorState>();
 String? receiverId;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await ScreenSecure.init(screenshotBlock: false, screenRecordBlock: false);
   final prefs = await SharedPreferences.getInstance();
   final hasSeenOnBoard = prefs.getBool('onboard_seen') ?? false;
   final token = prefs.getString('token');

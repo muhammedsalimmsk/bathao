@@ -1,4 +1,4 @@
-package com.example.bathao
+package com.bathao.app
 
 import io.flutter.embedding.android.FlutterActivity
 

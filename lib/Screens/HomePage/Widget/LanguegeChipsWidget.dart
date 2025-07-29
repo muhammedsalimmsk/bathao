@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../Controllers/LanguageController/LanguageController.dart';
-// Make sure to import your controller
 
 class LanguageChips extends StatelessWidget {
   final List<String> languages;

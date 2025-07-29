@@ -1,11 +1,9 @@
-import 'dart:async';
 import 'package:bathao/Controllers/AuthController/AuthController.dart';
 import 'package:bathao/Controllers/PaymentController/PaymentController.dart';
 import 'package:bathao/Screens/CoinPurchasePage/PurchaseHistoryPage.dart';
 import 'package:bathao/Theme/Colors.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 
 import '../../Models/plan_model/plan.dart';
 
@@ -13,11 +11,6 @@ class CoinPurchasePage extends StatelessWidget {
   CoinPurchasePage({super.key});
   final PaymentController controller = Get.put(PaymentController());
 
-  final List<Map<String, dynamic>> purchaseHistory = [
-    {"coins": 100, "date": "2025-06-20", "amount": "₹1"},
-    {"coins": 500, "date": "2025-06-18", "amount": "₹3"},
-    {"coins": 1000, "date": "2025-06-12", "amount": "₹6"},
-  ];
   TextEditingController emailController = TextEditingController();
 
   @override
@@ -26,6 +19,7 @@ class CoinPurchasePage extends StatelessWidget {
       resizeToAvoidBottomInset: false,
       backgroundColor: AppColors.scaffoldColor,
       appBar: AppBar(
+        iconTheme: IconThemeData(color: AppColors.textColor),
         title: Text("Wallet", style: TextStyle(color: AppColors.textColor)),
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -49,7 +43,7 @@ class CoinPurchasePage extends StatelessWidget {
               child: Center(
                 child: Obx(
                   () => Text(
-                    "Available Coins: ${controller.totalCoin.value ?? 0}",
+                    "Available Coins: ${totalCoin.value ?? 0}",
                     style: TextStyle(
                       color: Colors.greenAccent,
                       fontWeight: FontWeight.bold,
@@ -69,33 +63,24 @@ class CoinPurchasePage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 12),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: _buildCoinPlanCard(controller.coinPlan[0]),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: _buildCoinPlanCard(controller.coinPlan[1]),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  Align(
-                    alignment: Alignment.center,
-                    child: SizedBox(
-                      width: MediaQuery.of(context).size.width / 2,
-                      child: _buildCoinPlanCard(controller.coinPlan[2]),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            Obx(() {
+              final plans = controller.coinPlan;
+              return GridView.builder(
+                itemCount: plans.length,
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 12,
+                  mainAxisSpacing: 16,
+                  childAspectRatio: 1.2,
+                ),
+                itemBuilder: (context, index) {
+                  return _buildCoinPlanCard(plans[index]);
+                },
+              );
+            }),
+
             Spacer(flex: 1),
             Center(
               child: GestureDetector(
@@ -198,7 +183,7 @@ class CoinPurchasePage extends StatelessWidget {
         ),
         child: Column(
           children: [
-            if (pkg.description!.isNotEmpty)
+            if (pkg.description != null)
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 margin: const EdgeInsets.only(bottom: 6),
@@ -215,7 +200,7 @@ class CoinPurchasePage extends StatelessWidget {
                   ),
                 ),
               ),
-            Icon(Icons.monetization_on, color: Colors.amberAccent, size: 36),
+            Text('🪙', style: TextStyle(fontSize: 24)),
             const SizedBox(height: 8),
             Text("${pkg.coins} Coins", style: TextStyle(color: Colors.white)),
             const SizedBox(height: 4),

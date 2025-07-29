@@ -75,7 +75,7 @@ class CallController extends GetxController {
       if (response.isOk) {
         print(response.body);
         final data = response.body;
-        return controller.totalCoin.value = data['coinsRemaining'];
+        return totalCoin.value = data['coinsRemaining'];
       } else {
         print(response.body);
       }

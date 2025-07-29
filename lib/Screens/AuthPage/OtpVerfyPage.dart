@@ -59,7 +59,7 @@ class OtpVerificationPage extends GetView<AuthController> {
             const SizedBox(height: 12),
 
             const Text(
-              "We’ve sent an SMS with an activation code to your phone",
+              "We’ve sent an SMS with an activation code to your WhatsApp",
               style: TextStyle(color: Colors.white70),
             ),
             Text(

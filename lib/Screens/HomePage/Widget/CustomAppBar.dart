@@ -1,3 +1,4 @@
+import 'package:bathao/Screens/CoinPurchasePage/CoinPurchasePage.dart';
 import 'package:bathao/Theme/Colors.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -52,59 +53,70 @@ class CustomHomeAppBar extends StatelessWidget {
               ),
 
               // 👤 Main content
-              Row(
+              Stack(
                 children: [
-                  // 👤 Profile image
-                  CircleAvatar(
-                    radius: 35,
-                    backgroundImage: NetworkImage(profileImageUrl),
-                  ),
-                  const SizedBox(width: 16),
-                  // 👋 Greeting
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
+                  Row(
                     children: [
-                      Text(
-                        "Hello, $userName",
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      // 👤 Profile image
+                      CircleAvatar(
+                        radius: 35,
+                        backgroundImage: NetworkImage(profileImageUrl),
                       ),
-                      const Text(
-                        "wellcome Bathao",
-                        style: TextStyle(color: Colors.white70),
-                      ),
-                    ],
-                  ),
-                  const Spacer(),
-                  // 🪙 Coins
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text(
-                        "Available Coins",
-                        style: TextStyle(color: Colors.white70),
-                      ),
-                      Row(
+                      const SizedBox(width: 16),
+                      // 👋 Greeting
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Icon(Icons.stars, color: Colors.amber),
-                          const SizedBox(width: 4),
-                          Obx(
-                            () => Text(
-                              coinCount.value.toString(),
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                              ),
+                          Text(
+                            "Hello, $userName",
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
                             ),
+                          ),
+                          const Text(
+                            "wellcome Bathao",
+                            style: TextStyle(color: Colors.white70),
                           ),
                         ],
                       ),
                     ],
+                  ),
+                  Positioned(
+                    right: 0,
+                    top: 10,
+                    child: GestureDetector(
+                      onTap: () {
+                        Get.to(CoinPurchasePage());
+                      },
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text(
+                            "Available Coins",
+                            style: TextStyle(color: Colors.white70),
+                          ),
+                          Row(
+                            children: [
+                              const Text('🪙'),
+                              const SizedBox(width: 4),
+                              Obx(
+                                () => Text(
+                                  coinCount.value.toString(),
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ],
               ),

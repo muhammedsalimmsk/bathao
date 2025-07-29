@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:bathao/Controllers/AuthController/AuthController.dart';
+import 'package:bathao/Controllers/ProfileController/ProfileController.dart';
 import 'package:bathao/Models/user_model.dart';
 import 'package:bathao/Services/ApiService.dart';
 import 'package:bathao/Widgets/MainPage/MainPage.dart';
@@ -17,6 +18,7 @@ String? jwsToken;
 class RegisterController extends GetxController {
   TextEditingController nameController = TextEditingController();
   TextEditingController dobController = TextEditingController();
+  ProfileController profileController = Get.put(ProfileController());
   final ApiService _apiService = ApiService();
   late UserModel model = UserModel();
   AuthController controller = Get.put(AuthController());
@@ -112,6 +114,11 @@ class RegisterController extends GetxController {
       await file.writeAsBytes(byteData.buffer.asUint8List());
 
       pickedImage.value = file;
+      profileController.pickedImage.value = pickedImage.value;
+      if (jwsToken != null) {
+        print(pickedImage.value);
+        await profileController.updateProfilePic(pickedImage.value);
+      }
       selectedSticker.value = assetPath;
     } catch (e) {
       print("Error converting sticker to file: $e");

@@ -7,7 +7,10 @@ import '../../Models/listners_model/listners_model.dart';
 import '../../Models/listners_model/receiver.dart';
 import '../../Screens/AuthPage/LoginPage.dart';
 import '../../Services/ApiService.dart';
+
 // Update path if needed
+RxInt audioRate = 0.obs;
+RxInt videoRate = 0.obs;
 
 class ListenerController extends GetxController {
   List<Receiver> listenerData = [];
@@ -27,7 +30,27 @@ class ListenerController extends GetxController {
   @override
   void onInit() async {
     super.onInit();
+    await getCallRate();
     await fetchListeners();
+  }
+
+  Future getCallRate() async {
+    final endpoint = "api/v1/user/get-user-cost";
+    try {
+      final response = await _apiService.getRequest(
+        endpoint,
+        bearerToken: jwsToken,
+      );
+      if (response.isOk) {
+        audioRate.value = response.body['audio'];
+        videoRate.value = response.body['video'];
+      } else {
+        print(response.body);
+      }
+    } catch (e) {
+      print(e);
+      rethrow;
+    }
   }
 
   Future<void> fetchListeners() async {

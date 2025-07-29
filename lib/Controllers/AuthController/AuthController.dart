@@ -169,7 +169,8 @@ class AuthController extends GetxController {
       } else {
         print("user not found");
         print(response.body);
-        if (response.body['message'] == 'Invalid token') {
+        if (response.body['message'] == 'Invalid token' ||
+            response.body['message'] == 'User not found') {
           print("object");
           Get.offAll(LoginPage());
         }

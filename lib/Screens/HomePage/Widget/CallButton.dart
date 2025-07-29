@@ -27,17 +27,20 @@ class MyCustomCallButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // ❌ Disable button if isEnabled is false or user is offline
+    final bool isButtonActive = isEnabled && status.toLowerCase() != "offline";
+
     return InkWell(
       onTap:
-          isEnabled
+          isButtonActive
               ? () {
-                print(controller.totalCoin.value);
+                print(totalCoin.value);
                 receiverId = userId;
 
-                if (controller.totalCoin.value >= 100) {
+                if (totalCoin.value >= 100) {
                   if (status == "online") {
                     if (isVideoCall) {
-                      if (controller.totalCoin.value >= 200) {
+                      if (totalCoin.value >= 200) {
                         callController.callType = "video";
                         ZegoUIKitPrebuiltCallInvitationService().send(
                           isVideoCall: true,
@@ -84,15 +87,12 @@ class MyCustomCallButton extends StatelessWidget {
                   );
                 }
               }
-              : null, // ❌ No tap if not enabled
+              : null, // Disable tap if not active
       child: Container(
         width: 40,
         height: 40,
         decoration: BoxDecoration(
-          color:
-              isEnabled
-                  ? AppColors.onBoardPrimary
-                  : Colors.grey, // ⚠️ Grey if disabled
+          color: isButtonActive ? AppColors.onBoardPrimary : Colors.grey,
           shape: BoxShape.circle,
         ),
         child: Icon(

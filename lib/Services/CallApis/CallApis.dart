@@ -1,5 +1,5 @@
 class CallApis {
-  static final appId = 1330047587;
-  static final appSign =
-      '3cc2c2b0a35825161cd3e135234bac1aeea2340422430ecd3a695c707a063890';
+  static const appId = 2071986165;
+  static const appSign =
+      '6b838bfbdb69ecc9b53821d3ec9c6cb3960b412a6f07c483832c9cde339e8905';
 }
