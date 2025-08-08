@@ -45,7 +45,7 @@ class MyCustomCallButton extends StatelessWidget {
                         ZegoUIKitPrebuiltCallInvitationService().send(
                           isVideoCall: true,
                           invitees: [ZegoCallUser(userId, name)],
-                          resourceID: "zegouikit_call",
+                          resourceID: "zego_call",
                         );
                       } else {
                         Get.snackbar(
@@ -60,7 +60,7 @@ class MyCustomCallButton extends StatelessWidget {
                       ZegoUIKitPrebuiltCallInvitationService().send(
                         isVideoCall: false,
                         invitees: [ZegoCallUser(userId, name)],
-                        resourceID: "zegouikit_call",
+                        resourceID: "zego_call",
                       );
                     }
                   } else if (status == "busy") {

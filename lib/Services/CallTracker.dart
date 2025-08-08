@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:bathao/Controllers/PaymentController/PaymentController.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 import 'package:bathao/Controllers/CallController/CallController.dart';
@@ -22,8 +21,9 @@ class CallTracker {
     debugPrint(
       '📡 Room state changed: ${state.reason.name} at ${DateTime.now()}',
     );
-
+    final zego = ZegoUIKit.instance;
     try {
+      zego.setAudioOutputToSpeaker(false);
       if (state.reason == ZegoRoomStateChangedReason.Logined) {
         if (!_isCallActive) {
           // Ensure call start logic runs only once

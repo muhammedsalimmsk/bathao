@@ -7,14 +7,13 @@ import 'package:bathao/Services/ApiService.dart';
 import 'package:bathao/Services/CallApis/CallApis.dart';
 import 'package:bathao/Theme/Colors.dart';
 import 'package:flutter/material.dart';
-
-import 'package:permission_handler/permission_handler.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 import 'package:zego_uikit_signaling_plugin/zego_uikit_signaling_plugin.dart';
 import 'package:get/get.dart';
+import '../../Controllers/ListenerController/ListenerController.dart';
+import '../../Models/listners_model/receiver.dart';
 import '../../Services/CallTracker.dart';
-
 import 'Widget/LanguegeChipsWidget.dart';
 import 'Widget/ListenerListWidget.dart';
 
@@ -29,22 +28,7 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Future<void> requestCallPermissions() async {
-      // Android 13+ needs POST_NOTIFICATIONS
-      await [Permission.microphone, Permission.notification].request();
-
-      // Android 14+ specific FGS permissions (check availability first)
-      if (await Permission.microphone.isDenied ||
-          await Permission.microphone.isPermanentlyDenied) {
-        await Permission.microphone.request();
-      }
-
-      if (await Permission.audio.isDenied) {
-        await Permission.audio.request();
-      }
-    }
-
-    bool _hasShownUnavailableDialog = false;
+    bool hasShownUnavailableDialog = false;
     final callTracker = CallTracker();
 
     // Your ZegoCloud initialization
@@ -54,6 +38,76 @@ class HomePage extends StatelessWidget {
       userID: userModel!.user!.id!, // Ensure userModel is not null here
       userName: userModel!.user!.name!,
       plugins: [ZegoUIKitSignalingPlugin()],
+      requireConfig: (ZegoCallInvitationData data) {
+        final config =
+            data.invitees.length > 1
+                ? (data.type == ZegoCallInvitationType.videoCall
+                    ? ZegoUIKitPrebuiltCallConfig.groupVideoCall()
+                    : ZegoUIKitPrebuiltCallConfig.groupVoiceCall())
+                : (data.type == ZegoCallInvitationType.videoCall
+                    ? ZegoUIKitPrebuiltCallConfig.oneOnOneVideoCall()
+                    : ZegoUIKitPrebuiltCallConfig.oneOnOneVoiceCall());
+
+        // earpiece
+        config.avatarBuilder = (
+          BuildContext context,
+          Size size,
+          ZegoUIKitUser? user,
+          Map extraInfo,
+        ) {
+          if (user == null) {
+            return const SizedBox();
+          }
+          final ListenerController listenerController =
+              Get.find<ListenerController>();
+
+          // 2. Search for the receiver in your list using the user.id
+          String? avatarURL;
+          String displayLetter = user.name.isNotEmpty ? user.name[0] : '?';
+
+          try {
+            final Receiver matchedReceiver = listenerController.listenerData
+                .firstWhere((receiver) => receiver.id == user.id);
+            // If a match is found, use its avatar URL
+            if (matchedReceiver.profilePic != null) {
+              avatarURL = "$baseImageUrl${matchedReceiver.profilePic}";
+            }
+          } catch (e) {
+            print('Avatar not found for user ${user.id}, using default.');
+          }
+          return avatarURL != null
+              ? Container(
+                width: size.width,
+                height: size.height,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  image: DecorationImage(
+                    image: NetworkImage(avatarURL),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              )
+              : Container(
+                width: size.width,
+                height: size.height,
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.grey,
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  displayLetter,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: size.width * 0.5,
+                    decoration: TextDecoration.none,
+                  ),
+                ),
+              );
+        };
+        return config;
+      },
+
       events: ZegoUIKitPrebuiltCallEvents(
         room: ZegoCallRoomEvents(
           onStateChanged: callTracker.onRoomStateChanged,
@@ -75,8 +129,8 @@ class HomePage extends StatelessWidget {
           );
 
           // 107026 = all called users not registered
-          if (error.code == 107026 && !_hasShownUnavailableDialog) {
-            _hasShownUnavailableDialog = true;
+          if (error.code == 107026 && !hasShownUnavailableDialog) {
+            hasShownUnavailableDialog = true;
             Get.defaultDialog(
               barrierDismissible: false,
               backgroundColor: AppColors.onBoardSecondary,
@@ -86,13 +140,13 @@ class HomePage extends StatelessWidget {
               textConfirm: "OK",
               confirmTextColor: Colors.white,
               onConfirm: () {
-                _hasShownUnavailableDialog = false;
+                hasShownUnavailableDialog = false;
                 Get.back();
               },
             );
-          } else if (error.code != 107026 && !_hasShownUnavailableDialog) {
+          } else if (error.code != 107026 && !hasShownUnavailableDialog) {
             // Handle other errors generally
-            _hasShownUnavailableDialog = true;
+            hasShownUnavailableDialog = true;
             Get.defaultDialog(
               barrierDismissible: false,
               backgroundColor: AppColors.onBoardSecondary,
@@ -102,7 +156,7 @@ class HomePage extends StatelessWidget {
               textConfirm: "OK",
               confirmTextColor: Colors.white,
               onConfirm: () {
-                _hasShownUnavailableDialog = false;
+                hasShownUnavailableDialog = false;
                 Get.back();
               },
             );

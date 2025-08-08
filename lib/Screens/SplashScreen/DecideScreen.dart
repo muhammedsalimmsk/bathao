@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import '../../Controllers/AuthController/AuthController.dart';
 import '../AuthPage/LoginPage.dart';
 import '../HomePage/HomePage.dart';
+import '../UpdateScreen/UpdateScreen.dart';
 
 class DecideScreen extends StatelessWidget {
   DecideScreen({super.key});
@@ -16,6 +17,10 @@ class DecideScreen extends StatelessWidget {
   Future<Widget> checkAuth() async {
     if (jwsToken != null) {
       await controller.getUserData();
+      bool isVersionOk = await controller.checkAppVersion();
+      if (isVersionOk) {
+        return const UpdateAppScreen();
+      }
       return MainPage();
     } else {
       return LoginPage();

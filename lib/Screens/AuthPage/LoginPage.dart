@@ -133,78 +133,78 @@ class LoginPage extends StatelessWidget {
                           },
                         ),
                         SizedBox(height: 10),
-                        Center(
-                          child: Container(
-                            width: 420,
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 20,
-                              vertical: 14,
-                            ),
-                            decoration: BoxDecoration(
-                              color: AppColors.getStartBackground,
-                              borderRadius: BorderRadius.circular(40),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  "Login",
-                                  style: TextStyle(
-                                    color: AppColors.textColor,
-                                    fontSize: 22,
-                                  ),
-                                ),
-                                SizedBox(width: 10),
-                                Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Icon(
-                                      Icons.arrow_forward_ios,
+                        InkWell(
+                          onTap: () {
+                            if (controller.phoneController.text != '') {
+                              controller.sendOtp();
+                            } else {
+                              Get.snackbar(
+                                "Error",
+                                "Please enter your number",
+                                snackPosition: SnackPosition.BOTTOM,
+                                backgroundColor: AppColors.textColor,
+                              );
+                            }
+                          },
+                          child: Center(
+                            child: Container(
+                              width: 420,
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 20,
+                                vertical: 14,
+                              ),
+                              decoration: BoxDecoration(
+                                color: AppColors.getStartBackground,
+                                borderRadius: BorderRadius.circular(40),
+                              ),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    "Login",
+                                    style: TextStyle(
                                       color: AppColors.textColor,
+                                      fontSize: 22,
                                     ),
-                                    Icon(
-                                      Icons.arrow_forward_ios,
-                                      color: AppColors.textColor.withOpacity(
-                                        0.8,
+                                  ),
+                                  SizedBox(width: 10),
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(
+                                        Icons.arrow_forward_ios,
+                                        color: AppColors.textColor,
                                       ),
-                                    ),
-                                    Icon(
-                                      Icons.arrow_forward_ios,
-                                      color: AppColors.textColor.withOpacity(
-                                        0.6,
+                                      Icon(
+                                        Icons.arrow_forward_ios,
+                                        color: AppColors.textColor.withOpacity(
+                                          0.8,
+                                        ),
                                       ),
-                                    ),
-                                    Icon(
-                                      Icons.arrow_forward_ios,
-                                      color: AppColors.textColor.withOpacity(
-                                        0.4,
+                                      Icon(
+                                        Icons.arrow_forward_ios,
+                                        color: AppColors.textColor.withOpacity(
+                                          0.6,
+                                        ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(width: 10),
-                                Obx(
-                                  () =>
-                                      controller.isLoading.value
-                                          ? CircularProgressIndicator(
-                                            color: AppColors.progressBarColor,
-                                          )
-                                          : InkWell(
-                                            onTap: () {
-                                              if (controller
-                                                      .phoneController
-                                                      .text !=
-                                                  '') {
-                                                controller.sendOtp();
-                                              } else {
-                                                Get.snackbar(
-                                                  "Error",
-                                                  "Please enter your number",
-                                                );
-                                              }
-                                            },
-                                            child: Container(
+                                      Icon(
+                                        Icons.arrow_forward_ios,
+                                        color: AppColors.textColor.withOpacity(
+                                          0.4,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(width: 10),
+                                  Obx(
+                                    () =>
+                                        controller.isLoading.value
+                                            ? CircularProgressIndicator(
+                                              color: AppColors.progressBarColor,
+                                            )
+                                            : Container(
                                               decoration: BoxDecoration(
                                                 shape: BoxShape.circle,
                                                 gradient: LinearGradient(
@@ -227,9 +227,9 @@ class LoginPage extends StatelessWidget {
                                                 color: Colors.white,
                                               ),
                                             ),
-                                          ),
-                                ),
-                              ],
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),

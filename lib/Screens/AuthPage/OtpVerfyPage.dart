@@ -111,32 +111,31 @@ class OtpVerificationPage extends GetView<AuthController> {
 
             const SizedBox(height: 10),
 
-            // Resend Text
+            // Resend Text with Dynamic Style and Tap Control
             Center(
-              child: GestureDetector(
-                onTap: () {
-                  if (controller.secondsRemaining.value == 0) {
-                    controller.resendCode();
-                  }
-                },
-                child: const Text.rich(
-                  TextSpan(
-                    children: [
-                      TextSpan(
-                        text: "I didn’t receive a code ",
-                        style: TextStyle(color: Colors.white70),
-                      ),
-                      TextSpan(
-                        text: "Resend",
-                        style: TextStyle(
-                          color: Colors.red,
-                          fontWeight: FontWeight.bold,
+              child: Obx(() {
+                final isClickable = controller.secondsRemaining.value == 0;
+                return GestureDetector(
+                  onTap: isClickable ? controller.resendCode : null,
+                  child: RichText(
+                    text: TextSpan(
+                      children: [
+                        const TextSpan(
+                          text: "I didn’t receive a code ",
+                          style: TextStyle(color: Colors.white70),
                         ),
-                      ),
-                    ],
+                        TextSpan(
+                          text: "Resend",
+                          style: TextStyle(
+                            color: isClickable ? Colors.red : Colors.white30,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ),
+                );
+              }),
             ),
 
             const Spacer(),
@@ -154,7 +153,7 @@ class OtpVerificationPage extends GetView<AuthController> {
                         onTap: controller.verifyOTP,
                         child: Center(
                           child: Container(
-                            padding: EdgeInsets.symmetric(
+                            padding: const EdgeInsets.symmetric(
                               horizontal: 20,
                               vertical: 14,
                             ),
@@ -165,14 +164,14 @@ class OtpVerificationPage extends GetView<AuthController> {
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Text(
+                                const Text(
                                   "Get Started",
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 22,
                                   ),
                                 ),
-                                SizedBox(width: 10),
+                                const SizedBox(width: 10),
                                 Icon(
                                   Icons.arrow_forward_ios,
                                   color: AppColors.textColor,
@@ -189,7 +188,7 @@ class OtpVerificationPage extends GetView<AuthController> {
                                   Icons.arrow_forward_ios,
                                   color: AppColors.textColor.withOpacity(0.4),
                                 ),
-                                SizedBox(width: 10),
+                                const SizedBox(width: 10),
                                 Container(
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
@@ -199,16 +198,16 @@ class OtpVerificationPage extends GetView<AuthController> {
                                     ),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: AppColors.textColor.withValues(
-                                          alpha: 0.30,
+                                        color: AppColors.textColor.withOpacity(
+                                          0.3,
                                         ),
                                         blurRadius: 10,
                                         spreadRadius: 4,
                                       ),
                                     ],
                                   ),
-                                  padding: EdgeInsets.all(8),
-                                  child: Icon(
+                                  padding: const EdgeInsets.all(8),
+                                  child: const Icon(
                                     Icons.arrow_forward_ios,
                                     color: Colors.white,
                                   ),

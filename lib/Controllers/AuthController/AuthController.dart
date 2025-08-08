@@ -22,12 +22,36 @@ class AuthController extends GetxController {
   RxString otp = ''.obs;
   String? token;
   var isLoading = false.obs;
+  String? updateUrl;
 
   final ApiService _apiService = ApiService();
   @override
   void onInit() {
     super.onInit();
     startTimer();
+  }
+
+  Future<bool> checkAppVersion() async {
+    final endpoint = "api/v1/user/get-app-version";
+    try {
+      // Example API call
+      final response = await _apiService.getRequest(
+        endpoint,
+      ); // Replace with actual call
+      if (response.isOk) {
+        print(response.body);
+        final currentVersion = '1.0.1';
+        updateUrl = response.body['link'];
+        final version = response.body['version'];
+        return currentVersion != version;
+      } else {
+        print(response.body);
+        return false;
+      }
+    } catch (e) {
+      print("Version check failed: $e");
+      return false; // Fallback: assume OK to let user in
+    }
   }
 
   void startTimer() {
@@ -42,6 +66,7 @@ class AuthController extends GetxController {
   void resendCode() {
     secondsRemaining.value = 30;
     startTimer();
+    sendOtp();
     // trigger resend OTP API here
   }
 

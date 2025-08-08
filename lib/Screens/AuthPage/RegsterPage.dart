@@ -171,59 +171,70 @@ class RegisterPage extends StatelessWidget {
                       ],
                     ),
                   ),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 32, vertical: 14),
-                    decoration: BoxDecoration(
-                      color: AppColors.getStartBackground,
-                      borderRadius: BorderRadius.circular(40),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          "Continue",
-                          style: TextStyle(color: Colors.white, fontSize: 22),
-                        ),
-                        SizedBox(width: 10),
-                        Icon(
-                          Icons.arrow_forward_ios,
-                          color: AppColors.textColor,
-                        ),
-                        Icon(
-                          Icons.arrow_forward_ios,
-                          color: AppColors.textColor.withOpacity(0.8),
-                        ),
-                        Icon(
-                          Icons.arrow_forward_ios,
-                          color: AppColors.textColor.withOpacity(0.6),
-                        ),
-                        Icon(
-                          Icons.arrow_forward_ios,
-                          color: AppColors.textColor.withOpacity(0.4),
-                        ),
-                        SizedBox(width: 10),
-                        Obx(
-                          () =>
-                              controller.isLoading.value
-                                  ? CircularProgressIndicator(
-                                    color: AppColors.progressBarColor,
-                                  )
-                                  : InkWell(
-                                    onTap: () {
-                                      if (_formKey.currentState!.validate()) {
-                                        // Form is valid
-                                        // Proceed only if image is picked
-                                        Get.to(
-                                          LanguageSelectionPage(
-                                            phoneNumber: phone,
-                                            countryCode: countryCode,
-                                            name:
-                                                controller.nameController.text,
-                                          ),
-                                        );
-                                      }
-                                    },
-                                    child: Container(
+                  Obx(
+                    () =>
+                        controller.isLoading.value
+                            ? CircularProgressIndicator(
+                              color: AppColors.progressBarColor,
+                            )
+                            : InkWell(
+                              onTap: () {
+                                if (_formKey.currentState!.validate()) {
+                                  // Form is valid
+                                  // Proceed only if image is picked
+                                  Get.to(
+                                    LanguageSelectionPage(
+                                      phoneNumber: phone,
+                                      countryCode: countryCode,
+                                      name: controller.nameController.text,
+                                    ),
+                                  );
+                                }
+                              },
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 32,
+                                  vertical: 14,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: AppColors.getStartBackground,
+                                  borderRadius: BorderRadius.circular(40),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      "Continue",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 22,
+                                      ),
+                                    ),
+                                    SizedBox(width: 10),
+                                    Icon(
+                                      Icons.arrow_forward_ios,
+                                      color: AppColors.textColor,
+                                    ),
+                                    Icon(
+                                      Icons.arrow_forward_ios,
+                                      color: AppColors.textColor.withOpacity(
+                                        0.8,
+                                      ),
+                                    ),
+                                    Icon(
+                                      Icons.arrow_forward_ios,
+                                      color: AppColors.textColor.withOpacity(
+                                        0.6,
+                                      ),
+                                    ),
+                                    Icon(
+                                      Icons.arrow_forward_ios,
+                                      color: AppColors.textColor.withOpacity(
+                                        0.4,
+                                      ),
+                                    ),
+                                    SizedBox(width: 10),
+                                    Container(
                                       decoration: BoxDecoration(
                                         shape: BoxShape.circle,
                                         gradient: LinearGradient(
@@ -245,10 +256,10 @@ class RegisterPage extends StatelessWidget {
                                         color: Colors.white,
                                       ),
                                     ),
-                                  ),
-                        ),
-                      ],
-                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
                   ),
                 ],
               ),

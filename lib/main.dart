@@ -19,7 +19,7 @@ final navigatorKey = GlobalKey<NavigatorState>();
 String? receiverId;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await ScreenSecure.init(screenshotBlock: false, screenRecordBlock: false);
+  await ScreenSecure.init(screenshotBlock: true, screenRecordBlock: true);
   final prefs = await SharedPreferences.getInstance();
   final hasSeenOnBoard = prefs.getBool('onboard_seen') ?? false;
   final token = prefs.getString('token');

@@ -25,7 +25,7 @@ class CoinPurchasePage extends StatelessWidget {
         elevation: 0,
         centerTitle: true,
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -81,7 +81,7 @@ class CoinPurchasePage extends StatelessWidget {
               );
             }),
 
-            Spacer(flex: 1),
+            SizedBox(height: 20),
             Center(
               child: GestureDetector(
                 onTap: () {
@@ -106,7 +106,6 @@ class CoinPurchasePage extends StatelessWidget {
                 ),
               ),
             ),
-            Spacer(flex: 1),
             SizedBox(height: 50),
           ],
         ),
